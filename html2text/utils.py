@@ -226,8 +226,8 @@ def escape_md(text):
     Escapes markdown-sensitive characters within other markdown
     constructs.
     """
-    return config.RE_MD_CHARS_MATCHER.sub(r"\\\1", text)
-
+    return text
+    #return config.RE_MD_CHARS_MATCHER.sub(r"\\\1", text)
 
 def escape_md_section(text, snob=False):
     """
