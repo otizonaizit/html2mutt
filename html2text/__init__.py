@@ -800,11 +800,17 @@ class HTML2Text(HTMLParser.HTMLParser):
 
         if self.maybe_automatic_link is not None:
             href = self.maybe_automatic_link
-            if (href == data and self.absolute_url_matcher.match(href) and
-                    self.use_automatic_links):
-                self.o("<" + data + ">")
-                self.empty_link = False
-                return
+            if self.use_automatic_links:
+                # massage href to remove mailto links
+                href = href.replace('mailto:', '')
+                if href == data:
+                    self.o("<" + data + ">")
+                    self.empty_link = False
+                    return
+                else:
+                    self.o("[")
+                    self.maybe_automatic_link = None
+                    self.empty_link = False
             else:
                 self.o("[")
                 self.maybe_automatic_link = None
