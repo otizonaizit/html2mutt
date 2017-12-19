@@ -375,7 +375,7 @@ class HTML2Text(HTMLParser.HTMLParser):
         if tag == "blockquote":
             if start:
                 self.p()
-                self.o('> ', 0, 1)
+                self.o('>', 0, 1)
                 self.start = 1
                 self.blockquote += 1
             else:
