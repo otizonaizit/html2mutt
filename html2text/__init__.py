@@ -749,7 +749,7 @@ class HTML2Text(HTMLParser.HTMLParser):
 
             if self.space:
                 if not self.lastWasNL:
-                    self.out(' ')
+                    self.out('')
                 self.space = 0
 
             if self.a and ((self.p_p == 2 and self.links_each_paragraph) or
