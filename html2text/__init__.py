@@ -803,8 +803,12 @@ class HTML2Text(HTMLParser.HTMLParser):
             if self.use_automatic_links:
                 # massage href to remove mailto links
                 href = href.replace('mailto:', '')
-                if href == data:
-                    self.o("<" + data + ">")
+                # if href is a telephone number
+                if href.startswith('tel:'):
+                    href = data
+                # check also if data is only missing the http/s part
+                if href == data or href[7:] == data or href[8:] == data:
+                    self.o(data)
                     self.empty_link = False
                     return
                 else:
