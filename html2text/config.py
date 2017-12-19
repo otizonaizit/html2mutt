@@ -1,7 +1,7 @@
 import re
 
 # Use Unicode characters instead of their ascii pseudo-replacements
-UNICODE_SNOB = 0
+UNICODE_SNOB = 1
 
 # Marker to use for marking tables for padding post processing
 TABLE_MARKER_FOR_PAD = "special_marker_for_table_padding"
@@ -13,7 +13,7 @@ ESCAPE_SNOB = 0
 LINKS_EACH_PARAGRAPH = 0
 
 # Wrap long lines at position. 0 for no wrapping. (Requires Python 2.3.)
-BODY_WIDTH = 78
+BODY_WIDTH = 0
 
 # Don't show internal links (href="#local-anchor") -- corresponding link
 # targets won't be visible in the plain text file anyway.
@@ -35,7 +35,7 @@ GOOGLE_LIST_INDENT = 36
 BOLD_TEXT_STYLE_VALUES = ('bold', '700', '800', '900')
 
 IGNORE_ANCHORS = False
-IGNORE_IMAGES = False
+IGNORE_IMAGES = True
 IMAGES_TO_ALT = False
 IMAGES_WITH_SIZE = False
 IGNORE_EMPHASIS = False
@@ -135,4 +135,4 @@ IGNORE_TABLES = False
 
 # Use a single line break after a block element rather than two line breaks.
 # NOTE: Requires body width setting to be 0.
-SINGLE_LINE_BREAK = False
+SINGLE_LINE_BREAK = True

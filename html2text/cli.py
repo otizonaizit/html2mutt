@@ -104,14 +104,14 @@ def main():
         "-d", "--dash-unordered-list",
         action="store_true",
         dest="ul_style_dash",
-        default=False,
+        default=True,
         help="use a dash rather than a star for unordered list items"
     )
     p.add_option(
         "-e", "--asterisk-emphasis",
         action="store_true",
         dest="em_style_asterisk",
-        default=False,
+        default=True,
         help="use an asterisk rather than an underscore for emphasized text"
     )
     p.add_option(
