@@ -348,7 +348,7 @@ class HTML2Text(HTMLParser.HTMLParser):
 
         if tag == "br" and start:
             if self.blockquote > 0:
-                self.o("  \n> ")
+                self.o("  \n>")
             else:
                 self.o("  \n")
 
