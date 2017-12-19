@@ -130,7 +130,7 @@ UNIFIABLE = {
 # Format tables in HTML rather than Markdown syntax
 BYPASS_TABLES = False
 # Ignore table-related tags (table, th, td, tr) while keeping rows
-IGNORE_TABLES = False
+IGNORE_TABLES = True
 
 
 # Use a single line break after a block element rather than two line breaks.
