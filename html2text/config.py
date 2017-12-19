@@ -26,7 +26,7 @@ INLINE_LINKS = True
 # addition to their square brackets)
 PROTECT_LINKS = False
 # WRAP_LINKS = True
-WRAP_LINKS = True
+WRAP_LINKS = False
 
 # Number of pixels Google indents nested lists
 GOOGLE_LIST_INDENT = 36
