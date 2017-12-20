@@ -179,7 +179,7 @@ class HTML2Text(HTMLParser.HTMLParser):
 
         # reduce >2 empty lines to only one empty line
         outtext = re.sub(config.RE_MULTIPLE_EMPTY_LINES, '\n\n', outtext)
-        # do the same for lines containing only the quotechar
+
         return outtext
 
     def handle_charref(self, c):
@@ -388,30 +388,21 @@ class HTML2Text(HTMLParser.HTMLParser):
                     and re.match(r'[^\s]', self.preceding_data[-1]))
 
         if tag in ['em', 'i', 'u'] and not self.ignore_emphasis:
-            if start and no_preceding_space(self):
-                emphasis = ' ' + self.emphasis_mark
-            else:
-                emphasis = self.emphasis_mark
+            emphasis = self.emphasis_mark
 
             self.o(emphasis)
             if start:
                 self.stressed = True
 
         if tag in ['strong', 'b'] and not self.ignore_emphasis:
-            if start and no_preceding_space(self):
-                strong = ' ' + self.strong_mark
-            else:
-                strong = self.strong_mark
+            strong = self.strong_mark
 
             self.o(strong)
             if start:
                 self.stressed = True
 
         if tag in ['del', 'strike', 's']:
-            if start and no_preceding_space(self):
-                strike = ' ~~'
-            else:
-                strike = '~~'
+            strike = '~~'
 
             self.o(strike)
             if start:
@@ -752,8 +743,8 @@ class HTML2Text(HTMLParser.HTMLParser):
                 self.br_toggle = ''
 
             if self.space:
-                #if not self.lastWasNL:
-                #    self.out(' ')
+                if not self.lastWasNL and not self.blockquote:
+                    self.out(' ')
                 self.space = 0
 
             if self.a and ((self.p_p == 2 and self.links_each_paragraph) or
