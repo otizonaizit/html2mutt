@@ -278,6 +278,7 @@ def main():
 
     # remove tags that we can't parse properly
     data = data.replace('<wbr>', '')
+    data = data.replace('<wbr class="">', '')
     h = HTML2Text(baseurl=baseurl)
     # handle options
     if options.ul_style_dash:
