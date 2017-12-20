@@ -63,32 +63,32 @@ RE_MD_CHARS_MATCHER_ALL = re.compile(r"([`\*_{}\[\]\(\)#!])")
 # to find links in the text
 RE_LINK = re.compile(r"(\[.*?\] ?\(.*?\))|(\[.*?\]:.*?)")
 
-RE_MD_DOT_MATCHER = re.compile(r"""
-    ^             # start of line
-    (\s*\d+)      # optional whitespace and a number
-    (\.)          # dot
-    (?=\s)        # lookahead assert whitespace
-    """, re.MULTILINE | re.VERBOSE)
-RE_MD_PLUS_MATCHER = re.compile(r"""
-    ^
-    (\s*)
-    (\+)
-    (?=\s)
-    """, flags=re.MULTILINE | re.VERBOSE)
-RE_MD_DASH_MATCHER = re.compile(r"""
-    ^
-    (\s*)
-    (-)
-    (?=\s|\-)     # followed by whitespace (bullet list, or spaced out hr)
-                  # or another dash (header or hr)
-    """, flags=re.MULTILINE | re.VERBOSE)
-RE_SLASH_CHARS = r'\`*_{}[]()#+-.!'
-RE_MD_BACKSLASH_MATCHER = re.compile(r'''
-    (\\)          # match one slash
-    (?=[%s])      # followed by a char that requires escaping
-    ''' % re.escape(RE_SLASH_CHARS),
-    flags=re.VERBOSE)
-
+#RE_MD_DOT_MATCHER = re.compile(r"""
+#    ^             # start of line
+#    (\s*\d+)      # optional whitespace and a number
+#    (\.)          # dot
+#    (?=\s)        # lookahead assert whitespace
+#    """, re.MULTILINE | re.VERBOSE)
+#RE_MD_PLUS_MATCHER = re.compile(r"""
+#    ^
+#    (\s*)
+#    (\+)
+#    (?=\s)
+#    """, flags=re.MULTILINE | re.VERBOSE)
+#RE_MD_DASH_MATCHER = re.compile(r"""
+#    ^
+#    (\s*)
+#    (-)
+#    (?=\s|\-)     # followed by whitespace (bullet list, or spaced out hr)
+#                  # or another dash (header or hr)
+#    """, flags=re.MULTILINE | re.VERBOSE)
+#RE_SLASH_CHARS = r'\`*_{}[]()#+-.!'
+#RE_MD_BACKSLASH_MATCHER = re.compile(r'''
+#    (\\)          # match one slash
+#    (?=[%s])      # followed by a char that requires escaping
+#    ''' % re.escape(RE_SLASH_CHARS),
+#    flags=re.VERBOSE)
+#
 UNIFIABLE = {
     'rsquo': "'",
     'lsquo': "'",

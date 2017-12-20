@@ -811,7 +811,8 @@ class HTML2Text(HTMLParser.HTMLParser):
                               href[7:] == datacmp,
                               href[8:] == datacmp,
                               href[:-1] == datacmp and href[-1] == '/',
-                              href == datacmp[:-1] and datacmp[-1] == '/')
+                              href == datacmp[:-1] and datacmp[-1] == '/',
+                              )
                 if any(conditions):
                     self.o(data)
                     self.empty_link = False
