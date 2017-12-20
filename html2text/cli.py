@@ -1,4 +1,6 @@
+import io
 import optparse
+import sys
 import warnings
 
 from html2text.compat import urllib
@@ -224,7 +226,7 @@ def main():
     elif len(args) > 2:
         p.error('Too many arguments')
 
-    if len(args) > 0 and args[0] != '-':  # pragma: no cover
+    if len(args) > 0:  # pragma: no cover
         file_ = args[0]
 
         if file_.startswith('http://') or file_.startswith('https://'):
@@ -246,7 +248,10 @@ def main():
                 if encoding == 'us-ascii':
                     encoding = 'utf-8'
         else:
-            data = open(file_, 'rb').read()
+            if file_ == '-':
+                data = io.TextIOWrapper(sys.stdin.buffer, encoding=encoding).read()
+            else:
+                data = open(file_, 'rb').read()
             if encoding is None:
                 try:
                     from chardet import detect
