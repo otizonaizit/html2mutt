@@ -177,6 +177,9 @@ class HTML2Text(HTMLParser.HTMLParser):
         # the next handling.
         self.outtextlist = []
 
+        # reduce >2 empty lines to only one empty line
+        outtext = re.sub(config.RE_MULTIPLE_EMPTY_LINES, '\n\n', outtext)
+        # do the same for lines containing only the quotechar
         return outtext
 
     def handle_charref(self, c):
@@ -344,7 +347,7 @@ class HTML2Text(HTMLParser.HTMLParser):
             elif self.astack and tag == 'div':
                 pass
             else:
-                self.p()
+                self.p(tag)
 
         if tag == "br" and start:
             quotechars = '>'*self.blockquote
@@ -665,9 +668,12 @@ class HTML2Text(HTMLParser.HTMLParser):
         if self.p_p == 0:
             self.p_p = 1
 
-    def p(self):
+    def p(self, tag='p'):
         "Set pretty print to 1 or 2 lines"
-        self.p_p = 1 if self.single_line_break else 2
+        if tag == 'div':
+            self.p_p = 1
+        else:
+            self.p_p = 1 if self.single_line_break else 2
 
     def soft_br(self):
         "Soft breaks"

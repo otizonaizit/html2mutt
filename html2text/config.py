@@ -50,6 +50,8 @@ USE_AUTOMATIC_LINKS = True
 
 # For checking space-only lines on line 771
 RE_SPACE = re.compile(r'\s\+')
+RE_MULTIPLE_EMPTY_LINES = re.compile(r'\n\s*\n')
+RE_MULTIPLE_QUOTE_EMPTY_LINES = re.compile(r'\n(\>+)\s*\n\>+')
 
 RE_UNESCAPE = re.compile(r"&(#?[xX]?(?:[0-9a-fA-F]+|\w{1,8}));")
 RE_ORDERED_LIST_MATCHER = re.compile(r'\d+\.\s')
@@ -135,4 +137,4 @@ IGNORE_TABLES = True
 
 # Use a single line break after a block element rather than two line breaks.
 # NOTE: Requires body width setting to be 0.
-SINGLE_LINE_BREAK = True
+SINGLE_LINE_BREAK = False
