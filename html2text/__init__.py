@@ -810,8 +810,16 @@ class HTML2Text(HTMLParser.HTMLParser):
                 # if href is a telephone number
                 if href.startswith('tel:'):
                     href = data
+                # data sometimes still contains spaces
+                datacmp = data.strip()
+                # href is equivalent to data if they only differ for a final '/'
                 # check also if data is only missing the http/s part
-                if href == data or href[7:] == data or href[8:] == data:
+                conditions = (href == datacmp,
+                              href[7:] == datacmp,
+                              href[8:] == datacmp,
+                              href[:-1] == datacmp and href[-1] == '/',
+                              href == datacmp[:-1] and datacmp[-1] == '/')
+                if any(conditions):
                     self.o(data)
                     self.empty_link = False
                     return
