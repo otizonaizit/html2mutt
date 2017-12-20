@@ -179,6 +179,8 @@ class HTML2Text(HTMLParser.HTMLParser):
 
         # reduce >2 empty lines to only one empty line
         outtext = re.sub(config.RE_MULTIPLE_EMPTY_LINES, '\n\n', outtext)
+        # do the same for lines with only blockquote char and spaces
+        outtext =  re.sub(config.RE_MULTIPLE_QUOTEEMPTY_LINES, '\g<QUOTE>', outtext)
 
         return outtext
 
