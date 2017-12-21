@@ -17,16 +17,10 @@ from html2text import config
 from html2text.utils import (
     name2cp,
     unifiable_n,
-    google_text_emphasis,
-    google_fixed_width_font,
     element_style,
     hn,
-    google_has_height,
-    escape_md,
-    google_list_style,
     list_numbering_start,
     dumb_css_parser,
-    escape_md_section,
     skipwrap,
     pad_tables_in_text
 )
@@ -69,7 +63,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.skip_internal_links = config.SKIP_INTERNAL_LINKS  # covered in cli
         self.inline_links = config.INLINE_LINKS  # covered in cli
         self.protect_links = config.PROTECT_LINKS  # covered in cli
-        self.google_list_indent = config.GOOGLE_LIST_INDENT  # covered in cli
         self.ignore_links = config.IGNORE_ANCHORS  # covered in cli
         self.ignore_images = config.IGNORE_IMAGES  # covered in cli
         self.images_to_alt = config.IMAGES_TO_ALT  # covered in cli
@@ -77,7 +70,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.ignore_emphasis = config.IGNORE_EMPHASIS  # covered in cli
         self.bypass_tables = config.BYPASS_TABLES  # covered in cli
         self.ignore_tables = config.IGNORE_TABLES  # covered in cli
-        self.google_doc = False  # covered in cli
         self.ul_item_mark = '*'  # covered in cli
         self.emphasis_mark = '_'  # covered in cli
         self.strong_mark = '**'
@@ -107,7 +99,7 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.astack = []
         self.maybe_automatic_link = None
         self.empty_link = False
-        self.absolute_url_matcher = re.compile(r'^[a-zA-Z+]+://')
+        self.absolute_url_matcher = config.RE_ABSOLUTE_LINK
         self.acount = 0
         self.list = []
         self.blockquote = 0
@@ -178,9 +170,9 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.outtextlist = []
 
         # reduce >2 empty lines to only one empty line
-        outtext = re.sub(config.RE_MULTIPLE_EMPTY_LINES, '\n\n', outtext)
+        outtext = config.RE_MULTIPLE_EMPTY_LINES.sub('\n\n', outtext)
         # do the same for lines with only blockquote char and spaces
-        outtext =  re.sub(config.RE_MULTIPLE_QUOTEEMPTY_LINES, '\g<QUOTE>', outtext)
+        outtext = config.RE_MULTIPLE_QUOTEEMPTY_LINES.sub('\g<QUOTE>', outtext)
 
         return outtext
 
@@ -314,23 +306,6 @@ class HTML2Text(HTMLParser.HTMLParser):
             self.maybe_automatic_link = None
             self.empty_link = False
 
-        if self.google_doc:
-            # the attrs parameter is empty for a closing tag. in addition, we
-            # need the attributes of the parent nodes in order to get a
-            # complete style description for the current element. we assume
-            # that google docs export well formed html.
-            parent_style = {}
-            if start:
-                if self.tag_stack:
-                    parent_style = self.tag_stack[-1][2]
-                tag_style = element_style(attrs, self.style_def, parent_style)
-                self.tag_stack.append((tag, attrs, tag_style))
-            else:
-                dummy, attrs, tag_style = self.tag_stack.pop() \
-                    if self.tag_stack else (None, {}, {})
-                if self.tag_stack:
-                    parent_style = self.tag_stack[-1][2]
-
         if hn(tag):
             self.p()
             if start:
@@ -341,12 +316,7 @@ class HTML2Text(HTMLParser.HTMLParser):
                 return  # prevent redundant emphasis marks on headers
 
         if tag in ['p', 'div']:
-            if self.google_doc:
-                if start and google_has_height(tag_style):
-                    self.p()
-                else:
-                    self.soft_br()
-            elif self.astack and tag == 'div':
+            if self.astack and tag == 'div':
                 pass
             else:
                 self.p(tag)
@@ -387,7 +357,7 @@ class HTML2Text(HTMLParser.HTMLParser):
 
         def no_preceding_space(self):
             return (self.preceding_data
-                    and re.match(r'[^\s]', self.preceding_data[-1]))
+                    and config.RE_PRECEDING_SPACE.match(self.preceding_data[-1]))
 
         if tag in ['em', 'i', 'u'] and not self.ignore_emphasis:
             emphasis = self.emphasis_mark
@@ -410,11 +380,6 @@ class HTML2Text(HTMLParser.HTMLParser):
             if start:
                 self.stressed = True
 
-        if self.google_doc:
-            if not self.inheader:
-                # handle some font attributes, but leave headers clean
-                self.handle_emphasis(start, tag_style, parent_style)
-
         if tag in ["code", "tt"] and not self.pre:
             self.o('`')  # TODO: `` `this` ``
             self.code = not self.code
@@ -433,7 +398,7 @@ class HTML2Text(HTMLParser.HTMLParser):
         def link_url(self, link, title=""):
             url = urlparse.urljoin(self.baseurl, link)
             title = ' "{0}"'.format(title) if title.strip() else ''
-            self.o(']({url}{title})'.format(url=escape_md(url),
+            self.o(']({url}{title})'.format(url=url,
                                             title=title))
 
         if tag == "a" and not self.ignore_links:
@@ -462,7 +427,6 @@ class HTML2Text(HTMLParser.HTMLParser):
                         if self.inline_links:
                             try:
                                 title = a['title'] if a['title'] else ''
-                                title = escape_md(title)
                             except KeyError:
                                 link_url(self, a['href'], '')
                             else:
@@ -501,9 +465,9 @@ class HTML2Text(HTMLParser.HTMLParser):
                 # If we have a link to create, output the start
                 if self.maybe_automatic_link is not None:
                     href = self.maybe_automatic_link
-                    if self.images_to_alt and escape_md(alt) == href and \
+                    if self.images_to_alt and alt == href and \
                             self.absolute_url_matcher.match(href):
-                        self.o("<" + escape_md(alt) + ">")
+                        self.o("<" + alt + ">")
                         self.empty_link = False
                         return
                     else:
@@ -514,19 +478,17 @@ class HTML2Text(HTMLParser.HTMLParser):
                 # If we have images_to_alt, we discard the image itself,
                 # considering only the alt text.
                 if self.images_to_alt:
-                    self.o(escape_md(alt))
+                    self.o(alt)
                 else:
-                    self.o("![" + escape_md(alt) + "]")
+                    self.o("![" + alt + "]")
                     if self.inline_links:
                         href = attrs.get('href') or ''
                         self.o(
                             "(" +
-                            escape_md(
                                 urlparse.urljoin(
                                     self.baseurl,
                                     href
-                                )
-                            ) +
+                                ) +
                             ")"
                         )
                     else:
@@ -554,10 +516,7 @@ class HTML2Text(HTMLParser.HTMLParser):
             if (not self.list) and (not self.lastWasList):
                 self.p()
             if start:
-                if self.google_doc:
-                    list_style = google_list_style(tag_style)
-                else:
-                    list_style = tag
+                list_style = tag
                 numbering_start = list_numbering_start(attrs)
                 self.list.append({
                     'name': list_style,
@@ -566,7 +525,7 @@ class HTML2Text(HTMLParser.HTMLParser):
             else:
                 if self.list:
                     self.list.pop()
-                    if (not self.google_doc) and (not self.list):
+                    if not self.list:
                         self.o('\n')
             self.lastWasList = True
         else:
@@ -579,10 +538,7 @@ class HTML2Text(HTMLParser.HTMLParser):
                     li = self.list[-1]
                 else:
                     li = {'name': 'ul', 'num': 0}
-                if self.google_doc:
-                    nest_count = self.google_nest_count(tag_style)
-                else:
-                    nest_count = len(self.list)
+                nest_count = len(self.list)
                 # TODO: line up <ol><li>s > 9 correctly.
                 self.o("  " * nest_count)
                 if li['name'] == "ul":
@@ -681,20 +637,11 @@ class HTML2Text(HTMLParser.HTMLParser):
             self.abbr_data += data
 
         if not self.quiet:
-            if self.google_doc:
-                # prevent white space immediately after 'begin emphasis'
-                # marks ('**' and '_')
-                lstripped_data = data.lstrip()
-                if self.drop_white_space and not (self.pre or self.code):
-                    data = lstripped_data
-                if lstripped_data != '':
-                    self.drop_white_space = 0
-
             if puredata and not self.pre:
                 # This is a very dangerous call ... it could mess up
                 # all handling of &nbsp; when not handled properly
                 # (see entityref)
-                data = re.sub(r'\s+', r' ', data)
+                data = config.RE_SPACE_GENERAL.sub(' ', data)
                 if data and data[0] == ' ':
                     self.space = 1
                     data = data[1:]
@@ -785,7 +732,7 @@ class HTML2Text(HTMLParser.HTMLParser):
             self.stressed = False
             self.preceding_stressed = True
         elif (self.preceding_stressed
-              and re.match(r'[^\s.!?]', data[0])
+              and config.RE_NON_PUNCT.match(data[0])
               and not hn(self.current_tag)
               and self.current_tag not in ['a', 'code', 'pre']):
             # should match a letter or common punctuation
@@ -826,8 +773,6 @@ class HTML2Text(HTMLParser.HTMLParser):
                 self.maybe_automatic_link = None
                 self.empty_link = False
 
-        if not self.code and not self.pre and not entity_char:
-            data = escape_md_section(data, snob=self.escape_snob)
         self.preceding_data = data
         self.o(data, 1)
 
@@ -873,20 +818,6 @@ class HTML2Text(HTMLParser.HTMLParser):
     def unescape(self, s):
         return config.RE_UNESCAPE.sub(self.replaceEntities, s)
 
-    def google_nest_count(self, style):
-        """
-        Calculate the nesting count of google doc lists
-
-        :type style: dict
-
-        :rtype: int
-        """
-        nest_count = 0
-        if 'margin-left' in style:
-            nest_count = int(style['margin-left'][:-2]) \
-                // self.google_list_indent
-
-        return nest_count
 
     def optwrap(self, text):
         """

@@ -50,45 +50,20 @@ USE_AUTOMATIC_LINKS = True
 
 # For checking space-only lines on line 771
 RE_SPACE = re.compile(r'\s\+')
+RE_SPACE_GENERAL = re.compile(r'\s+')
 RE_MULTIPLE_EMPTY_LINES = re.compile(r'\n\s*\n')
 RE_MULTIPLE_QUOTEEMPTY_LINES = re.compile(r'(?P<QUOTE>\>+ *\n){2,}')
-
+RE_PRECEDING_SPACE = re.compile(r'[^\s]')
+RE_NON_PUNCT = re.compile(r'[^\s.!?]')
 
 RE_UNESCAPE = re.compile(r"&(#?[xX]?(?:[0-9a-fA-F]+|\w{1,8}));")
 RE_ORDERED_LIST_MATCHER = re.compile(r'\d+\.\s')
 RE_UNORDERED_LIST_MATCHER = re.compile(r'[-\*\+]\s')
-RE_MD_CHARS_MATCHER = re.compile(r"([\\\[\]\(\)])")
-RE_MD_CHARS_MATCHER_ALL = re.compile(r"([`\*_{}\[\]\(\)#!])")
 
 # to find links in the text
 RE_LINK = re.compile(r"(\[.*?\] ?\(.*?\))|(\[.*?\]:.*?)")
+RE_ABSOLUTE_LINK = re.compile(r'^[a-zA-Z+]+://')
 
-#RE_MD_DOT_MATCHER = re.compile(r"""
-#    ^             # start of line
-#    (\s*\d+)      # optional whitespace and a number
-#    (\.)          # dot
-#    (?=\s)        # lookahead assert whitespace
-#    """, re.MULTILINE | re.VERBOSE)
-#RE_MD_PLUS_MATCHER = re.compile(r"""
-#    ^
-#    (\s*)
-#    (\+)
-#    (?=\s)
-#    """, flags=re.MULTILINE | re.VERBOSE)
-#RE_MD_DASH_MATCHER = re.compile(r"""
-#    ^
-#    (\s*)
-#    (-)
-#    (?=\s|\-)     # followed by whitespace (bullet list, or spaced out hr)
-#                  # or another dash (header or hr)
-#    """, flags=re.MULTILINE | re.VERBOSE)
-#RE_SLASH_CHARS = r'\`*_{}[]()#+-.!'
-#RE_MD_BACKSLASH_MATCHER = re.compile(r'''
-#    (\\)          # match one slash
-#    (?=[%s])      # followed by a char that requires escaping
-#    ''' % re.escape(RE_SLASH_CHARS),
-#    flags=re.VERBOSE)
-#
 UNIFIABLE = {
     'rsquo': "'",
     'lsquo': "'",

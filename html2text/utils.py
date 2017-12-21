@@ -221,31 +221,6 @@ def wrap_read():  # pragma: no cover
         return sys.stdin.buffer.read()
 
 
-def escape_md(text):
-    """
-    Escapes markdown-sensitive characters within other markdown
-    constructs.
-    """
-    return text
-    #return config.RE_MD_CHARS_MATCHER.sub(r"\\\1", text)
-
-def escape_md_section(text, snob=False):
-    """
-    Escapes markdown-sensitive characters across whole document sections.
-    """
-    return text
-    text = config.RE_MD_BACKSLASH_MATCHER.sub(r"\\\1", text)
-
-    if snob:
-        text = config.RE_MD_CHARS_MATCHER_ALL.sub(r"\\\1", text)
-
-    text = config.RE_MD_DOT_MATCHER.sub(r"\1\\\2", text)
-    text = config.RE_MD_PLUS_MATCHER.sub(r"\1\\\2", text)
-    text = config.RE_MD_DASH_MATCHER.sub(r"\1\\\2", text)
-
-    #return text
-
-
 def reformat_table(lines, right_margin):
     """
     Given the lines of a table
