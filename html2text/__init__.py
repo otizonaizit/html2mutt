@@ -72,6 +72,12 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.ignore_tables = config.IGNORE_TABLES  # covered in cli
         self.ul_item_mark = '*'  # covered in cli
         self.emphasis_mark = '_'  # covered in cli
+        self.emphasis_mark_start = config.bcolors.YELLOW
+        self.emphasis_mark_end = config.bcolors.ENDC
+        self.strong_mark_start = config.bcolors.BOLD
+        self.strong_mark_end = config.bcolors.ENDC
+        self.underline_mark_start = config.bcolors.UNDERLINE
+        self.underline_mark_end = config.bcolors.ENDC
         self.strong_mark = '**'
         self.single_line_break = config.SINGLE_LINE_BREAK  # covered in cli
         self.use_automatic_links = config.USE_AUTOMATIC_LINKS  # covered in cli
@@ -246,10 +252,10 @@ class HTML2Text(HTMLParser.HTMLParser):
             if strikethrough:
                 self.quiet += 1
             if italic:
-                self.o(self.emphasis_mark)
+                self.o(self.emphasis_mark_start)
                 self.drop_white_space += 1
             if bold:
-                self.o(self.strong_mark)
+                self.o(self.strong_mark_start)
                 self.drop_white_space += 1
             if fixed:
                 self.o('`')
@@ -272,13 +278,13 @@ class HTML2Text(HTMLParser.HTMLParser):
                     # empty emphasis, drop it
                     self.drop_white_space -= 1
                 else:
-                    self.o(self.strong_mark)
+                    self.o(self.strong_mark_end)
             if italic:
                 if self.drop_white_space:
                     # empty emphasis, drop it
                     self.drop_white_space -= 1
                 else:
-                    self.o(self.emphasis_mark)
+                    self.o(self.emphasis_mark_end)
             # space is only allowed after *all* emphasis marks
             if (bold or italic) and not self.emphasis:
                 self.o(" ")
@@ -360,21 +366,28 @@ class HTML2Text(HTMLParser.HTMLParser):
             return (self.preceding_data
                     and config.RE_PRECEDING_SPACE.match(self.preceding_data[-1]))
 
-        if tag in ['em', 'i', 'u'] and not self.ignore_emphasis:
-            emphasis = self.emphasis_mark
-
-            self.o(emphasis)
+        if tag in ['em', 'i'] and not self.ignore_emphasis:
             if start:
+                self.o(self.emphasis_mark_start)
                 self.stressed = True
+            else:
+                self.o(self.emphasis_mark_end)
+
+        if tag in ['u'] and not self.ignore_emphasis:
+            if start:
+               self.o(self.underline_mark_start)
+               self.stressed = True
+            else:
+                self.o(self.underline_mark_end)
 
         if tag in ['strong', 'b'] and not self.ignore_emphasis:
-            strong = self.strong_mark
-
-            self.o(strong)
             if start:
-                self.stressed = True
+               self.o(self.strong_mark_start)
+               self.stressed = True
+            else:
+                self.o(self.strong_mark_end)
 
-        if tag in ['del', 'strike', 's']:
+        if tag in ['del', 'strike', 's'] and not self.ignore_emphasis:
             strike = '~~'
 
             self.o(strike)
