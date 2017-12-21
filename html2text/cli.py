@@ -229,36 +229,18 @@ def main():
     if len(args) > 0:  # pragma: no cover
         file_ = args[0]
 
-        if file_.startswith('http://') or file_.startswith('https://'):
-            warnings.warn(
-                "Support for retrieving html over network is set for "
-                "deprecation by version (2017, 1, x)",
-                DeprecationWarning
-            )
-            baseurl = file_
-            j = urllib.urlopen(baseurl)
-            data = j.read()
-            if encoding is None:
-                try:
-                    from feedparser import _getCharacterEncoding as enc
-                except ImportError:
-                    def enc(x, y):
-                        return ('utf-8', 1)
-                encoding = enc(j.headers, data)[0]
-                if encoding == 'us-ascii':
-                    encoding = 'utf-8'
+        if file_ == '-':
+            data = io.TextIOWrapper(sys.stdin.buffer, encoding=encoding).read()
         else:
-            if file_ == '-':
-                data = io.TextIOWrapper(sys.stdin.buffer, encoding=encoding).read()
-            else:
-                data = open(file_, 'rb').read()
-            if encoding is None:
-                try:
-                    from chardet import detect
-                except ImportError:
-                    def detect(x):
-                        return {'encoding': 'utf-8'}
-                encoding = detect(data)['encoding']
+            data = open(file_, 'rb').read()
+
+        if encoding is None:
+            try:
+                from chardet import detect
+            except ImportError:
+                def detect(x):
+                    return {'encoding': 'utf-8'}
+            encoding = detect(data)['encoding']
     else:
         data = wrap_read()
 
@@ -276,10 +258,11 @@ def main():
             print(warning)
             raise err
 
-    # remove tags that we can't parse properly
+    # remove tags that we can't parse properly beforehand
     data = data.replace('<wbr>', '')
     data = data.replace('<wbr class="">', '')
     h = HTML2Text(baseurl=baseurl)
+
     # handle options
     if options.ul_style_dash:
         h.ul_item_mark = '-'
