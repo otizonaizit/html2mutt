@@ -599,7 +599,7 @@ class HTML2Text(HTMLParser.HTMLParser):
                             self.o("  \n")
                 if tag in ["td", "th"] and start:
                     if self.split_next_td:
-                        self.o("| ")
+                        self.o("│ ")
                     self.split_next_td = True
 
                 if tag == "tr" and start:
@@ -609,7 +609,7 @@ class HTML2Text(HTMLParser.HTMLParser):
                     self.soft_br()
                 if tag == "tr" and not start and self.table_start:
                     # Underline table header
-                    self.o("|".join(["---"] * self.td_count))
+                    self.o("│".join(["───"] * self.td_count))
                     self.soft_br()
                     self.table_start = False
                 if tag in ["td", "th"] and start:
