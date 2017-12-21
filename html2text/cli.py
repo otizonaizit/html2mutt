@@ -254,8 +254,12 @@ def main():
             raise err
 
     # remove tags that we can't parse properly beforehand
+    # word break opportunity tag
     data = data.replace('<wbr>', '')
     data = data.replace('<wbr class="">', '')
+    # zero-width space
+    data = data.replace('\u200b', '')
+
     h = HTML2Text(baseurl=baseurl)
 
     # handle options
