@@ -227,10 +227,10 @@ def reformat_table(lines, right_margin):
     padds the cells and returns the new lines
     """
     # find the maximum width of the columns
-    max_width = [len(x.rstrip()) + right_margin for x in lines[0].split('|')]
+    max_width = [len(x.rstrip()) + right_margin for x in lines[0].split('│')]
     max_cols = len(max_width)
     for line in lines:
-        cols = [x.rstrip() for x in line.split('|')]
+        cols = [x.rstrip() for x in line.split('│')]
         num_cols = len(cols)
 
         # don't drop any data if colspan attributes result in unequal lengths
@@ -249,16 +249,20 @@ def reformat_table(lines, right_margin):
     # reformat
     new_lines = []
     for line in lines:
-        cols = [x.rstrip() for x in line.split('|')]
-        if set(line.strip()) == set('-|'):
-            filler = '-'
+        cols = [x.rstrip() for x in line.split('│')]
+        if set(line.strip()) == set('─│'):
+            filler = '─'
             new_cols = [x.rstrip() + (filler * (M - len(x.rstrip())))
                         for x, M in zip(cols, max_width)]
         else:
             filler = ' '
             new_cols = [x.rstrip() + (filler * (M - len(x.rstrip())))
                         for x, M in zip(cols, max_width)]
-        new_lines.append('|'.join(new_cols))
+        new_lines.append('│'+'│'.join(new_cols)+'│')
+    # add horizontal rule above and below the table
+    length = len(new_lines[0]) - 2
+    new_lines.insert(0, '╭'+'─'*length+'╮')
+    new_lines.append('╰'+'─'*length+'╯')
     return new_lines
 
 
