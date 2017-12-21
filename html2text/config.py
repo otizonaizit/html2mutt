@@ -42,7 +42,7 @@ IGNORE_EMPHASIS = False
 MARK_CODE = False
 DECODE_ERRORS = 'strict'
 DEFAULT_IMAGE_ALT = ''
-PAD_TABLES = False
+PAD_TABLES = True
 
 # Convert links with same href and text to <href> format
 # if they are absolute links
@@ -108,7 +108,7 @@ UNIFIABLE = {
 # Format tables in HTML rather than Markdown syntax
 BYPASS_TABLES = False
 # Ignore table-related tags (table, th, td, tr) while keeping rows
-IGNORE_TABLES = True
+IGNORE_TABLES = False
 
 
 # Use a single line break after a block element rather than two line breaks.
@@ -122,7 +122,6 @@ class bcolors:  # pragma: no cover
     WARNING = '\033[33m'
     FAIL = '\033[31m'
     YELLOW = '\033[33m'
-    ITALICS = '\033[3m'
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
