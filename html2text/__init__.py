@@ -327,7 +327,8 @@ class HTML2Text(HTMLParser.HTMLParser):
 
         if tag == "hr" and start:
             self.p()
-            self.o("–"*10)
+            columns = self.columns or 10
+            self.o("–"*columns)
             self.p()
 
         if tag in ["head", "style", 'script']:

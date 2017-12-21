@@ -22,7 +22,7 @@ def main():
         UNDERLINE = '\033[4m'
 
     p = optparse.OptionParser(
-        '%prog [(filename|url) [encoding]]',
+        '%prog [(filename|url) [encoding] [columns]]',
         version='%prog ' + ".".join(map(str, __version__))
     )
     p.add_option(
@@ -220,10 +220,13 @@ def main():
     (options, args) = p.parse_args()
 
     # process input
-    encoding = "utf-8"
-    if len(args) == 2:
+    encoding = None
+    columns = None
+    if len(args) > 1:
         encoding = args[1]
-    elif len(args) > 2:
+    if len(args) > 2:
+        columns = int(args[2])-1
+    if len(args) > 3:
         p.error('Too many arguments')
 
     if len(args) > 0:  # pragma: no cover
@@ -270,6 +273,7 @@ def main():
         h.emphasis_mark = '*'
         h.strong_mark = '__'
 
+    h.columns = columns
     h.body_width = options.body_width
     h.google_list_indent = options.list_indent
     h.ignore_emphasis = options.ignore_emphasis
