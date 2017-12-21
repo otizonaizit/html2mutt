@@ -114,3 +114,16 @@ IGNORE_TABLES = True
 # Use a single line break after a block element rather than two line breaks.
 # NOTE: Requires body width setting to be 0.
 SINGLE_LINE_BREAK = False
+
+class bcolors:  # pragma: no cover
+    HEADER = '\033[35m'
+    OKBLUE = '\033[34m'
+    OKGREEN = '\033[32m'
+    WARNING = '\033[33m'
+    FAIL = '\033[31m'
+    YELLOW = '\033[33m'
+    ITALICS = '\033[3m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+

@@ -11,15 +11,6 @@ from html2text.utils import wrapwrite, wrap_read
 def main():
     baseurl = ''
 
-    class bcolors:  # pragma: no cover
-        HEADER = '\033[95m'
-        OKBLUE = '\033[94m'
-        OKGREEN = '\033[92m'
-        WARNING = '\033[93m'
-        FAIL = '\033[91m'
-        ENDC = '\033[0m'
-        BOLD = '\033[1m'
-        UNDERLINE = '\033[4m'
 
     p = optparse.OptionParser(
         '%prog [(filename|url) [encoding] [columns]]',
@@ -255,6 +246,7 @@ def main():
                 # python 2.6.x does not have the errors option
                 data = data.decode(encoding)
         except UnicodeDecodeError as err:
+            bcolors = config.bcolors
             warning = bcolors.WARNING + "Warning:" + bcolors.ENDC
             warning += ' Use the ' + bcolors.OKGREEN
             warning += '--decode-errors=ignore' + bcolors.ENDC + 'flag.'
