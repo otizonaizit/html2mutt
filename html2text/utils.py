@@ -221,7 +221,7 @@ def wrap_read():  # pragma: no cover
         return sys.stdin.buffer.read()
 
 
-def reformat_table(lines, right_margin):
+def reformat_table(lines, right_margin, columns):
     """
     Given the lines of a table
     padds the cells and returns the new lines
@@ -265,10 +265,18 @@ def reformat_table(lines, right_margin):
     length = len(new_lines[0]) - 2
     new_lines.insert(0, '╭'+'─'*length+'╮')
     new_lines.append('╰'+'─'*length+'╯')
+    # detect if we are overflowing the screen
+    if columns and max(map(len, new_lines)) > (columns-1):
+        # we are overflowing, undo the whole thing
+        new_lines = []
+        for line in lines:
+            for char in '─│╰╯╭╮':
+                new_line = line.replace(char,'')
+            new_lines.append(new_line)
     return new_lines
 
 
-def pad_tables_in_text(text, right_margin=1):
+def pad_tables_in_text(text, right_margin=1, columns=None):
     """
     Provide padding for tables in the text
     """
@@ -280,7 +288,7 @@ def pad_tables_in_text(text, right_margin=1):
         if (config.TABLE_MARKER_FOR_PAD in line):
             table_started = not table_started
             if not table_started:
-                table = reformat_table(table_buffer, right_margin)
+                table = reformat_table(table_buffer, right_margin, columns)
                 new_lines.extend(table)
                 table_buffer = []
                 new_lines.append('')

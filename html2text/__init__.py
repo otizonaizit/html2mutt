@@ -145,7 +145,7 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.feed("")
         markdown = self.optwrap(self.close())
         if self.pad_tables:
-            return pad_tables_in_text(markdown)
+            return pad_tables_in_text(markdown, columns=self.columns)
         else:
             return markdown
 
