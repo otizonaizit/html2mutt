@@ -494,7 +494,7 @@ class HTML2Text(HTMLParser.HTMLParser):
                 if self.images_to_alt:
                     self.o(alt)
                 else:
-                    self.o("![" + alt + "]")
+                    self.o("◘" + alt )
                     if self.inline_links:
                         href = attrs.get('href') or ''
                         self.o(
