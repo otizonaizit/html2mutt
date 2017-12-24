@@ -104,6 +104,7 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.a = []
         self.astack = []
         self.maybe_automatic_link = None
+        self.div_was_inline = False
         self.empty_link = False
         self.absolute_url_matcher = config.RE_ABSOLUTE_LINK
         self.acount = 0
@@ -322,8 +323,12 @@ class HTML2Text(HTMLParser.HTMLParser):
                 return  # prevent redundant emphasis marks on headers
 
         if tag in ['p', 'div']:
-            if self.astack and tag == 'div':
+            if start and tag == 'div' and 'style' in attrs and 'display:inline' in attrs['style']:
+                self.div_was_inline = True
+            elif self.astack and tag == 'div':
                 pass
+            elif tag == 'div' and self.div_was_inline and not start:
+                self.div_was_inline = False
             else:
                 self.p(tag)
 
