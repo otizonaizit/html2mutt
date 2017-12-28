@@ -220,6 +220,10 @@ def main():
     if len(args) > 3:
         p.error('Too many arguments')
 
+    # just be safe
+    if encoding == 'us-ascii':
+        encoding = 'utf-8'
+
     if len(args) > 0:  # pragma: no cover
         file_ = args[0]
 
