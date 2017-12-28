@@ -20,7 +20,7 @@ BODY_WIDTH = 0
 SKIP_INTERNAL_LINKS = True
 
 # Use inline, rather than reference, formatting for images and links
-INLINE_LINKS = True
+INLINE_LINKS = False
 
 # Protect links from line breaks surrounding them with angle brackets (in
 # addition to their square brackets)

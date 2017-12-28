@@ -22,6 +22,7 @@ from html2text.utils import (
     list_numbering_start,
     dumb_css_parser,
     skipwrap,
+    convert_superscript,
     pad_tables_in_text
 )
 
@@ -519,7 +520,7 @@ class HTML2Text(HTMLParser.HTMLParser):
                             attrs['count'] = self.acount
                             attrs['outcount'] = self.outcount
                             self.a.append(attrs)
-                        self.o("[" + str(attrs['count']) + "]")
+                        self.o(convert_superscript(attrs['count']))
 
         if tag == 'dl' and start:
             self.p()
@@ -721,9 +722,10 @@ class HTML2Text(HTMLParser.HTMLParser):
                     self.out("\n")
 
                 newa = []
+                self.out('\n\n––––\n\n')
                 for link in self.a:
                     if self.outcount > link['outcount']:
-                        self.out("   [" + str(link['count']) + "]: " +
+                        self.out(convert_superscript(link['count']) + " " +
                                  urlparse.urljoin(self.baseurl, link['href']))
                         if 'title' in link:
                             self.out(" (" + link['title'] + ")")
