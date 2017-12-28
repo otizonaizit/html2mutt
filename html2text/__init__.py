@@ -80,6 +80,8 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.underline_mark_start = config.bcolors.UNDERLINE
         self.underline_mark_end = config.bcolors.ENDC
         self.strong_mark = '**'
+        self.link_begin_mark = config.bcolors.OKBLUE
+        self.link_end_mark = config.bcolors.ENDC
         self.single_line_break = config.SINGLE_LINE_BREAK  # covered in cli
         self.use_automatic_links = config.USE_AUTOMATIC_LINKS  # covered in cli
         self.hide_strikethrough = False  # covered in cli
@@ -310,7 +312,8 @@ class HTML2Text(HTMLParser.HTMLParser):
         if (start and self.maybe_automatic_link is not None and
                 tag not in ['p', 'div', 'style', 'dl', 'dt'] and
                 (tag != "img" or self.ignore_images)):
-            self.o("[")
+            #self.o("[")
+            self.o(self.link_begin_mark)
             self.maybe_automatic_link = None
             self.empty_link = False
 
@@ -418,7 +421,7 @@ class HTML2Text(HTMLParser.HTMLParser):
         def link_url(self, link, title=""):
             url = urlparse.urljoin(self.baseurl, link)
             title = ' "{0}"'.format(title) if title.strip() else ''
-            self.o(']({url}{title})'.format(url=url,
+            self.o(self.link_end_mark + '({url}{title})'.format(url=url,
                                             title=title))
 
         if tag == "a" and not self.ignore_links:
@@ -441,7 +444,8 @@ class HTML2Text(HTMLParser.HTMLParser):
                         self.maybe_automatic_link = None
                     elif a:
                         if self.empty_link:
-                            self.o("[")
+                            #self.o("[")
+                            self.o(self.link_begin_mark)
                             self.empty_link = False
                             self.maybe_automatic_link = None
                         if self.inline_links:
@@ -460,7 +464,7 @@ class HTML2Text(HTMLParser.HTMLParser):
                                 a['count'] = self.acount
                                 a['outcount'] = self.outcount
                                 self.a.append(a)
-                            self.o("][" + str(a['count']) + "]")
+                            self.o(self.link_end_mark + convert_superscript(a['count']))
 
         if tag == "img" and start and not self.ignore_images:
             if 'src' in attrs:
@@ -491,7 +495,8 @@ class HTML2Text(HTMLParser.HTMLParser):
                         self.empty_link = False
                         return
                     else:
-                        self.o("[")
+                        #self.o("[")
+                        self.o(self.link_begin_mark)
                         self.maybe_automatic_link = None
                         self.empty_link = False
 
@@ -786,11 +791,13 @@ class HTML2Text(HTMLParser.HTMLParser):
                     self.empty_link = False
                     return
                 else:
-                    self.o("[")
+                    #self.o("[")
+                    self.o(self.link_begin_mark)
                     self.maybe_automatic_link = None
                     self.empty_link = False
             else:
-                self.o("[")
+                #self.o("[")
+                self.o(self.link_begin_mark)
                 self.maybe_automatic_link = None
                 self.empty_link = False
 
