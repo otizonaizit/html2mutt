@@ -11,11 +11,6 @@ def name2cp(k):
     return htmlentitydefs.name2codepoint[k]
 
 
-unifiable_n = {}
-for k in config.UNIFIABLE.keys():
-    unifiable_n[name2cp(k)] = config.UNIFIABLE[k]
-
-
 def hn(tag):
     if tag[0] == 'h' and len(tag) == 2:
         try:

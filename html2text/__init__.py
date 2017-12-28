@@ -16,7 +16,6 @@ from html2text import config
 
 from html2text.utils import (
     name2cp,
-    unifiable_n,
     element_style,
     hn,
     list_numbering_start,
@@ -34,10 +33,6 @@ except NameError:
     nochr = str('')
 
 __version__ = (2017, 10, 4)
-
-
-# TODO:
-# Support decoded entities with UNIFIABLE.
 
 
 class HTML2Text(HTMLParser.HTMLParser):
@@ -132,12 +127,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.preceding_stressed = False
         self.preceding_data = None
         self.current_tag = None
-
-        try:
-            del unifiable_n[name2cp('nbsp')]
-        except KeyError:
-            pass
-        config.UNIFIABLE['nbsp'] = '&nbsp_place_holder;'
 
     def feed(self, data):
         data = data.replace("</' + 'script>", "</ignore>")
@@ -762,27 +751,18 @@ class HTML2Text(HTMLParser.HTMLParser):
         else:
             c = int(name)
 
-        if not self.unicode_snob and c in unifiable_n.keys():
-            return unifiable_n[c]
-        else:
-            try:
-                return chr(c)
-            except ValueError:  # invalid unicode
-                return ''
+        try:
+            return chr(c)
+        except ValueError:  # invalid unicode
+            return ''
 
     def entityref(self, c):
-        if not self.unicode_snob and c in config.UNIFIABLE.keys():
-            return config.UNIFIABLE[c]
+        try:
+            name2cp(c)
+        except KeyError:
+            return "&" + c + ';'
         else:
-            try:
-                name2cp(c)
-            except KeyError:
-                return "&" + c + ';'
-            else:
-                if c == 'nbsp':
-                    return config.UNIFIABLE[c]
-                else:
-                    return chr(name2cp(c))
+            return chr(name2cp(c))
 
     def replaceEntities(self, s):
         s = s.group(1)
