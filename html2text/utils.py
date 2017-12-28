@@ -300,3 +300,19 @@ def pad_tables_in_text(text, right_margin=1, columns=None):
             new_lines.append(line)
     new_text = '\n'.join(new_lines)
     return new_text
+
+SUP = ['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹']
+def convert_superscript(num):
+    str_ = ''
+    if num > 99:
+        mod = num//100
+        str_ = SUP[mod]
+        num  = num%100
+    if num > 9:
+        mod = num//10
+        str_ += SUP[mod]
+        num  = num%10
+    str_ += SUP[num]
+    return str_
+
+
