@@ -67,7 +67,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.ignore_links = config.IGNORE_ANCHORS  # covered in cli
         self.ignore_images = config.IGNORE_IMAGES  # covered in cli
         self.images_to_alt = config.IMAGES_TO_ALT  # covered in cli
-        self.images_with_size = config.IMAGES_WITH_SIZE  # covered in cli
         self.ignore_emphasis = config.IGNORE_EMPHASIS  # covered in cli
         self.bypass_tables = config.BYPASS_TABLES  # covered in cli
         self.ignore_tables = config.IGNORE_TABLES  # covered in cli
