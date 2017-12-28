@@ -52,8 +52,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.split_next_td = False
         self.td_count = 0
         self.table_start = False
-        self.unicode_snob = config.UNICODE_SNOB  # covered in cli
-        self.escape_snob = config.ESCAPE_SNOB  # covered in cli
         self.links_each_paragraph = config.LINKS_EACH_PARAGRAPH
         self.body_width = bodywidth  # covered in cli
         self.skip_internal_links = config.SKIP_INTERNAL_LINKS  # covered in cli
@@ -154,10 +152,7 @@ class HTML2Text(HTMLParser.HTMLParser):
 
         outtext = nochr.join(self.outtextlist)
 
-        if self.unicode_snob:
-            nbsp = chr(name2cp('nbsp'))
-        else:
-            nbsp = chr(32)
+        nbsp = chr(name2cp('nbsp'))
         try:
             outtext = outtext.replace(unicode('&nbsp_place_holder;'), nbsp)
         except NameError:
@@ -771,9 +766,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         else:
             return self.entityref(s)
 
-    def unescape(self, s):
-        return config.RE_UNESCAPE.sub(self.replaceEntities, s)
-
 
     def optwrap(self, text):
         """
@@ -829,11 +821,6 @@ def html2text(html, baseurl='', bodywidth=None):
     return h.handle(html)
 
 
-def unescape(s, unicode_snob=False):
-    h = HTML2Text()
-    h.unicode_snob = unicode_snob
-
-    return h.unescape(s)
 
 
 if __name__ == "__main__":

@@ -124,14 +124,6 @@ def main():
              "specified as well"
     )
     p.add_option(
-        "--escape-all",
-        action="store_true",
-        dest="escape_snob",
-        default=False,
-        help="Escape all special characters.  Output is less readable, but "
-             "avoids corner case formatting issues."
-    )
-    p.add_option(
         "--bypass-tables",
         action="store_true",
         dest="bypass_tables",
@@ -155,13 +147,6 @@ def main():
             "Use a single line break after a block element rather than two "
             "line breaks. NOTE: Requires --body-width=0"
         )
-    )
-    p.add_option(
-        "--unicode-snob",
-        action="store_true",
-        dest="unicode_snob",
-        default=config.UNICODE_SNOB,
-        help="Use unicode throughout document"
     )
     p.add_option(
         "--no-automatic-links",
@@ -275,12 +260,10 @@ def main():
     h.images_to_alt = options.images_to_alt
     h.google_doc = options.google_doc
     h.hide_strikethrough = options.hide_strikethrough
-    h.escape_snob = options.escape_snob
     h.bypass_tables = options.bypass_tables
     h.ignore_tables = options.ignore_tables
     h.single_line_break = options.single_line_break
     h.inline_links = options.inline_links
-    h.unicode_snob = options.unicode_snob
     h.use_automatic_links = options.use_automatic_links
     h.skip_internal_links = options.skip_internal_links
     h.links_each_paragraph = options.links_each_paragraph
