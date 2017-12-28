@@ -467,64 +467,13 @@ class HTML2Text(HTMLParser.HTMLParser):
 
         if tag == "img" and start and not self.ignore_images:
             if 'src' in attrs:
-                if not self.images_to_alt:
-                    attrs['href'] = attrs['src']
                 alt = attrs.get('alt') or self.default_image_alt
-
-                # If we have images_with_size, write raw html including width,
-                # height, and alt attributes
-                if self.images_with_size and \
-                        ("width" in attrs or "height" in attrs):
-                    self.o("<img src='" + attrs["src"] + "' ")
-                    if "width" in attrs:
-                        self.o("width='" + attrs["width"] + "' ")
-                    if "height" in attrs:
-                        self.o("height='" + attrs["height"] + "' ")
-                    if alt:
-                        self.o("alt='" + alt + "' ")
-                    self.o("/>")
-                    return
-
-                # If we have a link to create, output the start
-                if self.maybe_automatic_link is not None:
-                    href = self.maybe_automatic_link
-                    if self.images_to_alt and alt == href and \
-                            self.absolute_url_matcher.match(href):
-                        self.o("<" + alt + ">")
-                        self.empty_link = False
-                        return
-                    else:
-                        #self.o("[")
-                        self.o(self.link_begin_mark)
-                        self.maybe_automatic_link = None
-                        self.empty_link = False
-
                 # If we have images_to_alt, we discard the image itself,
                 # considering only the alt text.
                 if self.images_to_alt:
                     self.o(alt)
                 else:
                     self.o("◘" + alt )
-                    if self.inline_links:
-                        href = attrs.get('href') or ''
-                        self.o(
-                            "(" +
-                                urlparse.urljoin(
-                                    self.baseurl,
-                                    href
-                                ) +
-                            ")"
-                        )
-                    else:
-                        i = self.previousIndex(attrs)
-                        if i is not None:
-                            attrs = self.a[i]
-                        else:
-                            self.acount += 1
-                            attrs['count'] = self.acount
-                            attrs['outcount'] = self.outcount
-                            self.a.append(attrs)
-                        self.o(convert_superscript(attrs['count']))
 
         if tag == 'dl' and start:
             self.p()
