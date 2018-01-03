@@ -464,7 +464,7 @@ class HTML2Text(HTMLParser.HTMLParser):
                 if self.images_to_alt:
                     self.o(alt)
                 else:
-                    self.o("◘" + alt )
+                    self.o(self.image_placeholder_char + alt )
 
         if tag == 'dl' and start:
             self.p()

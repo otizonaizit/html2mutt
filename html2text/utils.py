@@ -293,7 +293,15 @@ def pad_tables_in_text(text, right_margin=1, columns=None):
             table_buffer.append(line)
         else:
             new_lines.append(line)
-    new_text = '\n'.join(new_lines)
+    # compensate for invisible unicode chars
+    padded_new_lines = []
+    for line in new_lines:
+        if len(line) > 2:
+            inv = line.count('\N{INVISIBLE SEPARATOR}')
+            padded_new_lines.append(line[:-1]+' '*inv+line[-1])
+        else:
+            padded_new_lines.append(line)
+    new_text = '\n'.join(padded_new_lines)
     return new_text
 
 SUP = ['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹']
