@@ -140,11 +140,21 @@ class HTML2Text(HTMLParser.HTMLParser):
     def handle(self, data):
         self.feed(data)
         self.feed("")
-        markdown = self.optwrap(self.close())
+        outtext = self.optwrap(self.close())
         if self.pad_tables:
-            return pad_tables_in_text(markdown, columns=self.columns)
-        else:
-            return markdown
+            outtext = pad_tables_in_text(outtext, columns=self.columns)
+
+        # reduce >2 empty lines to only one empty line
+        outtext = config.RE_MULTIPLE_EMPTY_LINES.sub('\n\n', outtext)
+        # do the same for lines with only blockquote char and spaces
+        outtext = config.RE_MULTIPLE_QUOTEEMPTY_LINES.sub('\g<QUOTE>', outtext)
+        # remove trailing spaces
+        outtext = config.RE_TRAILING_SPACES.sub('', outtext)
+        fl = open('/tmp/test.txt', 'w')
+        fl.write(outtext)
+        fl.close()
+
+        return outtext
 
     def outtextf(self, s):
         self.outtextlist.append(s)
@@ -168,11 +178,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         # Clear self.outtextlist to avoid memory leak of its content to
         # the next handling.
         self.outtextlist = []
-
-        # reduce >2 empty lines to only one empty line
-        outtext = config.RE_MULTIPLE_EMPTY_LINES.sub('\n\n', outtext)
-        # do the same for lines with only blockquote char and spaces
-        outtext = config.RE_MULTIPLE_QUOTEEMPTY_LINES.sub('\g<QUOTE>', outtext)
 
         return outtext
 
