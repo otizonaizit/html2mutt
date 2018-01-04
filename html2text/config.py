@@ -44,6 +44,7 @@ USE_AUTOMATIC_LINKS = True
 # For checking space-only lines on line 771
 RE_SPACE = re.compile(r'\s\+')
 RE_SPACE_GENERAL = re.compile(r'\s+')
+RE_TRAILING_SPACES = re.compile(r'[^\S\r\n]+$', re.MULTILINE)
 RE_MULTIPLE_EMPTY_LINES = re.compile(r'\n\s*\n')
 RE_MULTIPLE_QUOTEEMPTY_LINES = re.compile(r'(?P<QUOTE>\>+ *\n){2,}')
 RE_PRECEDING_SPACE = re.compile(r'[^\s]')
