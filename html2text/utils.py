@@ -266,12 +266,12 @@ def reformat_table(lines, right_margin, columns):
         new_lines = []
         for line in lines:
             for char in '─│╰╯╭╮':
-                new_line = line.replace(char,'')
+                new_line = line.replace(char,'').rstrip()
             new_lines.append(new_line)
     # compensate for invisible unicode chars
     padded_new_lines = []
     for line in new_lines:
-        if len(line) > 2:
+        if len(line) > 2 and line[-1] == '│':
             inv = line.count('\N{INVISIBLE SEPARATOR}')
             padded_new_lines.append(line[:-1]+' '*inv+line[-1])
         else:
