@@ -58,13 +58,6 @@ def main():
         default=config.IGNORE_ANCHORS,
         help="don't include any formatting for links")
     p.add_option(
-        "--protect-links",
-        dest="protect_links",
-        action="store_true",
-        default=config.PROTECT_LINKS,
-        help=("protect links from line breaks surrounding them " +
-              "with angle brackets"))
-    p.add_option(
         "--ignore-images",
         dest="ignore_images",
         action="store_true",

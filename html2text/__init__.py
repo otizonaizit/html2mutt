@@ -56,7 +56,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.body_width = bodywidth  # covered in cli
         self.skip_internal_links = config.SKIP_INTERNAL_LINKS  # covered in cli
         self.inline_links = config.INLINE_LINKS  # covered in cli
-        self.protect_links = config.PROTECT_LINKS  # covered in cli
         self.ignore_links = config.IGNORE_ANCHORS  # covered in cli
         self.ignore_images = config.IGNORE_IMAGES  # covered in cli
         self.images_to_alt = config.IMAGES_TO_ALT  # covered in cli
@@ -428,8 +427,6 @@ class HTML2Text(HTMLParser.HTMLParser):
                     self.astack.append(attrs)
                     self.maybe_automatic_link = attrs['href']
                     self.empty_link = True
-                    if self.protect_links:
-                        attrs['href'] = '<' + attrs['href'] + '>'
                 else:
                     self.astack.append(None)
             else:

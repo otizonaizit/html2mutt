@@ -16,9 +16,6 @@ SKIP_INTERNAL_LINKS = True
 # Use inline, rather than reference, formatting for images and links
 INLINE_LINKS = False
 
-# Protect links from line breaks surrounding them with angle brackets (in
-# addition to their square brackets)
-PROTECT_LINKS = False
 # WRAP_LINKS = True
 WRAP_LINKS = False
 
