@@ -16,8 +16,6 @@ SKIP_INTERNAL_LINKS = True
 # Use inline, rather than reference, formatting for images and links
 INLINE_LINKS = False
 
-# WRAP_LINKS = True
-WRAP_LINKS = False
 
 # Number of pixels Google indents nested lists
 GOOGLE_LIST_INDENT = 36

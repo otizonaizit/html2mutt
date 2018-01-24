@@ -31,13 +31,6 @@ def main():
         help="pad the cells to equal column width in tables"
     )
     p.add_option(
-        "--no-wrap-links",
-        dest="wrap_links",
-        action="store_false",
-        default=config.WRAP_LINKS,
-        help="wrap links during conversion"
-    )
-    p.add_option(
         "--ignore-emphasis",
         dest="ignore_emphasis",
         action="store_true",

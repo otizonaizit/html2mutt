@@ -6,10 +6,6 @@ from __future__ import unicode_literals
 import re
 import sys
 
-try:
-    from textwrap import wrap
-except ImportError:  # pragma: no cover
-    pass
 
 from html2text.compat import urlparse, HTMLParser
 from html2text import config
@@ -20,7 +16,6 @@ from html2text.utils import (
     hn,
     list_numbering_start,
     dumb_css_parser,
-    skipwrap,
     convert_superscript,
     pad_tables_in_text
 )
@@ -84,7 +79,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.use_automatic_links = config.USE_AUTOMATIC_LINKS  # covered in cli
         self.hide_strikethrough = False  # covered in cli
         self.mark_code = config.MARK_CODE
-        self.wrap_links = config.WRAP_LINKS  # covered in cli
         self.pad_tables = config.PAD_TABLES  # covered in cli
         self.default_image_alt = config.DEFAULT_IMAGE_ALT  # covered in cli
         self.tag_callback = None
@@ -139,7 +133,7 @@ class HTML2Text(HTMLParser.HTMLParser):
     def handle(self, data):
         self.feed(data)
         self.feed("")
-        outtext = self.optwrap(self.close())
+        outtext = self.close()
         if self.pad_tables:
             outtext = pad_tables_in_text(outtext, columns=self.columns)
 
@@ -776,50 +770,6 @@ class HTML2Text(HTMLParser.HTMLParser):
             return self.entityref(s)
 
 
-    def optwrap(self, text):
-        """
-        Wrap all paragraphs in the provided text.
-
-        :type text: str
-
-        :rtype: str
-        """
-        if not self.body_width:
-            return text
-
-        assert wrap, "Requires Python 2.3."
-        result = ''
-        newlines = 0
-        # I cannot think of a better solution for now.
-        # To avoid the non-wrap behaviour for entire paras
-        # because of the presence of a link in it
-        if not self.wrap_links:
-            self.inline_links = False
-        for para in text.split("\n"):
-            if len(para) > 0:
-                if not skipwrap(para, self.wrap_links):
-                    result += "\n".join(
-                        wrap(para, self.body_width, break_long_words=False)
-                    )
-                    if para.endswith('  '):
-                        result += "  \n"
-                        newlines = 1
-                    else:
-                        result += "\n\n"
-                        newlines = 2
-                else:
-                    # Warning for the tempted!!!
-                    # Be aware that obvious replacement of this with
-                    # line.isspace()
-                    # DOES NOT work! Explanations are welcome.
-                    if not config.RE_SPACE.match(para):
-                        result += para + "\n"
-                        newlines = 1
-            else:
-                if newlines < 2:
-                    result += "\n"
-                    newlines += 1
-        return result
 
 
 def html2text(html, baseurl='', bodywidth=None):
