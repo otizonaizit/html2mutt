@@ -20,7 +20,6 @@ GOOGLE_LIST_INDENT = 36
 # Values Google and others may use to indicate bold text
 BOLD_TEXT_STYLE_VALUES = ('bold', '700', '800', '900')
 
-IGNORE_IMAGES = False
 IMAGES_TO_ALT = False
 MARK_CODE = False
 DECODE_ERRORS = 'strict'

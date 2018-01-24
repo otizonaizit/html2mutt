@@ -50,7 +50,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.links_each_paragraph = config.LINKS_EACH_PARAGRAPH
         self.skip_internal_links = config.SKIP_INTERNAL_LINKS  # covered in cli
         self.inline_links = config.INLINE_LINKS  # covered in cli
-        self.ignore_images = config.IGNORE_IMAGES  # covered in cli
         self.images_to_alt = config.IMAGES_TO_ALT  # covered in cli
         self.bypass_tables = config.BYPASS_TABLES  # covered in cli
         self.ignore_tables = config.IGNORE_TABLES  # covered in cli
@@ -295,7 +294,7 @@ class HTML2Text(HTMLParser.HTMLParser):
         # that produces some output
         if (start and self.maybe_automatic_link is not None and
                 tag not in ['p', 'div', 'style', 'dl', 'dt'] and
-                (tag != "img" or self.ignore_images)):
+                (tag != "img")):
             #self.o("[")
             self.o(self.link_begin_mark)
             self.maybe_automatic_link = None
@@ -448,7 +447,7 @@ class HTML2Text(HTMLParser.HTMLParser):
                                 self.a.append(a)
                             self.o(self.link_end_mark + convert_superscript(a['count']))
 
-        if tag == "img" and start and not self.ignore_images:
+        if tag == "img" and start:
             if 'src' in attrs:
                 alt = attrs.get('alt') or self.default_image_alt
                 # If we have images_to_alt, we discard the image itself,

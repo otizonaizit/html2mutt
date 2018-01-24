@@ -38,13 +38,6 @@ def main():
         help="use reference style links instead of inline links"
     )
     p.add_option(
-        "--ignore-images",
-        dest="ignore_images",
-        action="store_true",
-        default=config.IGNORE_IMAGES,
-        help="don't include any formatting for images"
-    )
-    p.add_option(
         "--images-to-alt",
         dest="images_to_alt",
         action="store_true",
@@ -207,7 +200,6 @@ def main():
 
     h.columns = columns
     h.google_list_indent = options.list_indent
-    h.ignore_images = options.ignore_images
     h.images_to_alt = options.images_to_alt
     h.google_doc = options.google_doc
     h.hide_strikethrough = options.hide_strikethrough
