@@ -75,13 +75,6 @@ def main():
              "specified as well"
     )
     p.add_option(
-        "--bypass-tables",
-        action="store_true",
-        dest="bypass_tables",
-        default=config.BYPASS_TABLES,
-        help="Format tables in HTML rather than Markdown syntax."
-    )
-    p.add_option(
         "--ignore-tables",
         action="store_true",
         dest="ignore_tables",
@@ -195,7 +188,6 @@ def main():
     h.google_list_indent = options.list_indent
     h.google_doc = options.google_doc
     h.hide_strikethrough = options.hide_strikethrough
-    h.bypass_tables = options.bypass_tables
     h.ignore_tables = options.ignore_tables
     h.inline_links = options.inline_links
     h.use_automatic_links = options.use_automatic_links

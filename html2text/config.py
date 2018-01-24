@@ -46,8 +46,6 @@ RE_UNORDERED_LIST_MATCHER = re.compile(r'[-\*\+]\s')
 RE_LINK = re.compile(r"(\[.*?\] ?\(.*?\))|(\[.*?\]:.*?)")
 RE_ABSOLUTE_LINK = re.compile(r'^[a-zA-Z+]+://')
 
-# Format tables in HTML rather than Markdown syntax
-BYPASS_TABLES = False
 # Ignore table-related tags (table, th, td, tr) while keeping rows
 IGNORE_TABLES = False
 

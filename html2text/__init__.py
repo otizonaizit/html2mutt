@@ -50,7 +50,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.links_each_paragraph = config.LINKS_EACH_PARAGRAPH
         self.skip_internal_links = config.SKIP_INTERNAL_LINKS  # covered in cli
         self.inline_links = config.INLINE_LINKS  # covered in cli
-        self.bypass_tables = config.BYPASS_TABLES  # covered in cli
         self.ignore_tables = config.IGNORE_TABLES  # covered in cli
         self.ul_item_mark = '*'  # covered in cli
         self.emphasis_mark = '_'  # covered in cli
@@ -507,19 +506,6 @@ class HTML2Text(HTMLParser.HTMLParser):
                 else:
                     pass
 
-            elif self.bypass_tables:
-                if start:
-                    self.soft_br()
-                if tag in ["td", "th"]:
-                    if start:
-                        self.o('<{0}>\n\n'.format(tag))
-                    else:
-                        self.o('\n</{0}>'.format(tag))
-                else:
-                    if start:
-                        self.o('<{0}>'.format(tag))
-                    else:
-                        self.o('</{0}>'.format(tag))
 
             else:
                 if tag == "table":
