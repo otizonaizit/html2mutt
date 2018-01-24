@@ -30,7 +30,7 @@ import html.entities as htmlentitydefs
 import re
 import sys
 import io
-import optparse
+import argparse
 import os
 import sys
 import warnings
@@ -1028,65 +1028,64 @@ def html2text(html, baseurl=''):
 
 def main():
     baseurl = ''
-    p = optparse.OptionParser(
-        '%prog [filename]',
-        version='%prog ' + ".".join(map(str, __version__))
-    )
-    p.add_option(
+    p = argparse.ArgumentParser(
+        description=__doc__)
+    p.add_argument(
+        "file",
+        nargs='?',
+        default=None,
+        help="input file (read from stdin if not specified)")
+    p.add_argument(
         "--columns",
         dest="columns",
         action="store",
-        type="int",
+        type=int,
         default=0,
         help="columns"
     )
-    p.add_option(
+    p.add_argument(
         "--encoding",
         dest="encoding",
         action="store",
-        type="string",
         default="utf-8",
         help="input encoding"
     )
-    p.add_option(
+    p.add_argument(
         "--pad-tables",
         dest="pad_tables",
         action="store_true",
         default=PAD_TABLES,
         help="pad the cells to equal column width in tables"
     )
-    p.add_option(
+    p.add_argument(
         "--reference-links",
         dest="inline_links",
         action="store_false",
         default=INLINE_LINKS,
         help="use reference style links instead of inline links"
     )
-    p.add_option(
+    p.add_argument(
         "--decode-errors",
         dest="decode_errors",
         action="store",
-        type="string",
         default=DECODE_ERRORS,
         help="What to do in case of decode errors.'ignore', 'strict' and "
              "'replace' are acceptable values"
     )
-    (options, args) = p.parse_args()
+    options = p.parse_args()
 
     encoding = options.encoding
     if encoding == 'us-ascii':
         encoding = 'utf-8'
 
     try:
-        if len(args) == 0:
+        if not options.file:
             data = io.TextIOWrapper(sys.stdin.buffer,
                                     encoding=encoding,
                                     errors=options.decode_errors).read()
-        elif len(args) == 1:
-            data = open(args[0], 'rt', encoding=encoding,
-                                       errors=options.decode_errors).read()
         else:
-            p.error('Too many arguments')
+            data = open(options.file, 'rt', encoding=encoding,
+                                       errors=options.decode_errors).read()
     except UnicodeDecodeError as err:
         sys.stderr.write('Decoding error! Use --decode-errors=ignore!')
         raise err
