@@ -92,7 +92,6 @@ def main():
 
     h = HTML2Text(baseurl=baseurl)
 
-    h.ul_item_mark = '-'
 
     h.columns = options.columns
     h.inline_links = options.inline_links

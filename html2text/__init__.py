@@ -49,7 +49,7 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.td_count = 0
         self.table_start = False
         self.inline_links = config.INLINE_LINKS  # covered in cli
-        self.ul_item_mark = '*'  # covered in cli
+        self.ul_item_mark = '-'  # covered in cli
         self.emphasis_mark_start = '\N{INVISIBLE SEPARATOR}' #\u2063
         self.emphasis_mark_end = '\N{INVISIBLE SEPARATOR}'*2 #\u2063
         self.strong_mark_start = '\N{INVISIBLE SEPARATOR}' #\u2063
