@@ -16,7 +16,6 @@ INLINE_LINKS = False
 # Values Google and others may use to indicate bold text
 BOLD_TEXT_STYLE_VALUES = ('bold', '700', '800', '900')
 
-MARK_CODE = False
 DECODE_ERRORS = 'strict'
 PAD_TABLES = True
 

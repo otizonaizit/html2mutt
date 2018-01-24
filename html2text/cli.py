@@ -75,13 +75,6 @@ def main():
         help="Put links after each paragraph instead of document"
     )
     p.add_option(
-        "--mark-code",
-        action="store_true",
-        dest="mark_code",
-        default=config.MARK_CODE,
-        help="Mark program code blocks with [code]...[/code]"
-    )
-    p.add_option(
         "--decode-errors",
         dest="decode_errors",
         action="store",
@@ -160,7 +153,6 @@ def main():
     h.use_automatic_links = options.use_automatic_links
     h.skip_internal_links = options.skip_internal_links
     h.links_each_paragraph = options.links_each_paragraph
-    h.mark_code = options.mark_code
     h.pad_tables = options.pad_tables
 
     wrapwrite(h.handle(data))

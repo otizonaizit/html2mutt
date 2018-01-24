@@ -71,7 +71,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.image_placeholder_char = '\N{HEAVY SPARKLE}' #\u2748
         self.use_automatic_links = config.USE_AUTOMATIC_LINKS  # covered in cli
         self.hide_strikethrough = False  # covered in cli
-        self.mark_code = config.MARK_CODE
         self.pad_tables = config.PAD_TABLES  # covered in cli
         self.tag_callback = None
 
@@ -541,8 +540,6 @@ class HTML2Text(HTMLParser.HTMLParser):
                 self.pre = 1
             else:
                 self.pre = 0
-                if self.mark_code:
-                    self.out("\n[/code]")
             self.p()
 
     # TODO: Add docstring for these one letter functions
@@ -587,9 +584,6 @@ class HTML2Text(HTMLParser.HTMLParser):
                 if not data.startswith("\n") and not data.startswith("\r\n"):
                     # <pre>stuff...
                     data = "\n" + data
-                if self.mark_code:
-                    self.out("\n[code]")
-                    self.p_p = 0
 
             bq = (">" * self.blockquote)
             if not (force and data and data[0] == ">") and self.blockquote:
