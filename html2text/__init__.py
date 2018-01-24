@@ -1,25 +1,62 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 # coding: utf-8
 """html2text: Turn HTML into equivalent Markdown-structured text."""
 from __future__ import division
 from __future__ import unicode_literals
 import urllib.parse as urlparse
 import html.parser as HTMLParser
+import html.entities as htmlentitydefs
 
 import re
 import sys
+import io
+import optparse
+import os
+import sys
+import warnings
 
-from html2text import config
+SUP = ['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹']
 
-from html2text.utils import (
-    name2cp,
-    element_style,
-    hn,
-    list_numbering_start,
-    dumb_css_parser,
-    convert_superscript,
-    pad_tables_in_text
-)
+# Marker to use for marking tables for padding post processing
+TABLE_MARKER_FOR_PAD = "special_marker_for_table_padding"
+
+# Use inline, rather than reference, formatting for images and links
+INLINE_LINKS = False
+
+# Values Google and others may use to indicate bold text
+BOLD_TEXT_STYLE_VALUES = ('bold', '700', '800', '900')
+
+DECODE_ERRORS = 'strict'
+PAD_TABLES = True
+
+# For checking space-only lines on line 771
+RE_SPACE = re.compile(r'\s\+')
+RE_SPACE_GENERAL = re.compile(r'\s+')
+RE_TRAILING_SPACES = re.compile(r'[^\S\r\n]+$', re.MULTILINE)
+RE_MULTIPLE_EMPTY_LINES = re.compile(r'\n\s*\n')
+RE_MULTIPLE_QUOTEEMPTY_LINES = re.compile(r'(?P<QUOTE>\>+ *\n){2,}')
+RE_PRECEDING_SPACE = re.compile(r'[^\s]')
+RE_NON_PUNCT = re.compile(r'[^\s.!?]')
+
+RE_UNESCAPE = re.compile(r"&(#?[xX]?(?:[0-9a-fA-F]+|\w{1,8}));")
+RE_ORDERED_LIST_MATCHER = re.compile(r'\d+\.\s')
+RE_UNORDERED_LIST_MATCHER = re.compile(r'[-\*\+]\s')
+
+# to find links in the text
+RE_LINK = re.compile(r"(\[.*?\] ?\(.*?\))|(\[.*?\]:.*?)")
+RE_ABSOLUTE_LINK = re.compile(r'^[a-zA-Z+]+://')
+
+
+class bcolors:  # pragma: no cover
+    HEADER = '\033[35m'
+    OKBLUE = '\033[34m'
+    OKGREEN = '\033[32m'
+    WARNING = '\033[33m'
+    FAIL = '\033[31m'
+    YELLOW = '\033[33m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 try:
     chr = unichr
@@ -29,6 +66,269 @@ except NameError:
     nochr = str('')
 
 __version__ = (2017, 10, 4)
+
+def name2cp(k):
+    """Return sname to codepoint"""
+    if k == 'apos':
+        return ord("'")
+    return htmlentitydefs.name2codepoint[k]
+
+
+def hn(tag):
+    if tag[0] == 'h' and len(tag) == 2:
+        try:
+            n = int(tag[1])
+            if n in range(1, 10):  # pragma: no branch
+                return n
+        except ValueError:
+            return 0
+
+
+def dumb_property_dict(style):
+    """
+    :returns: A hash of css attributes
+    """
+    out = dict([(x.strip().lower(), y.strip().lower()) for x, y in
+                [z.split(':', 1) for z in
+                 style.split(';') if ':' in z
+                 ]
+                ]
+               )
+
+    return out
+
+
+def dumb_css_parser(data):
+    """
+    :type data: str
+
+    :returns: A hash of css selectors, each of which contains a hash of
+    css attributes.
+    :rtype: dict
+    """
+    # remove @import sentences
+    data += ';'
+    importIndex = data.find('@import')
+    while importIndex != -1:
+        data = data[0:importIndex] + data[data.find(';', importIndex) + 1:]
+        importIndex = data.find('@import')
+
+    # parse the css. reverted from dictionary comprehension in order to
+    # support older pythons
+    elements = [x.split('{') for x in data.split('}') if '{' in x.strip()]
+    try:
+        elements = dict([(a.strip(), dumb_property_dict(b))
+                         for a, b in elements])
+    except ValueError:  # pragma: no cover
+        elements = {}  # not that important
+
+    return elements
+
+
+def element_style(attrs, style_def, parent_style):
+    """
+    :type attrs: dict
+    :type style_def: dict
+    :type style_def: dict
+
+    :returns: A hash of the 'final' style attributes of the element
+    :rtype: dict
+    """
+    style = parent_style.copy()
+    if 'class' in attrs:
+        for css_class in attrs['class'].split():
+            css_style = style_def.get('.' + css_class, {})
+            style.update(css_style)
+    if 'style' in attrs:
+        immediate_style = dumb_property_dict(attrs['style'])
+        style.update(immediate_style)
+
+    return style
+
+
+def google_list_style(style):
+    """
+    Finds out whether this is an ordered or unordered list
+
+    :type style: dict
+
+    :rtype: str
+    """
+    if 'list-style-type' in style:
+        list_style = style['list-style-type']
+        if list_style in ['disc', 'circle', 'square', 'none']:
+            return 'ul'
+
+    return 'ol'
+
+
+def google_has_height(style):
+    """
+    Check if the style of the element has the 'height' attribute
+    explicitly defined
+
+    :type style: dict
+
+    :rtype: bool
+    """
+    if 'height' in style:
+        return True
+
+    return False
+
+
+def google_text_emphasis(style):
+    """
+    :type style: dict
+
+    :returns: A list of all emphasis modifiers of the element
+    :rtype: list
+    """
+    emphasis = []
+    if 'text-decoration' in style:
+        emphasis.append(style['text-decoration'])
+    if 'font-style' in style:
+        emphasis.append(style['font-style'])
+    if 'font-weight' in style:
+        emphasis.append(style['font-weight'])
+
+    return emphasis
+
+
+def google_fixed_width_font(style):
+    """
+    Check if the css of the current element defines a fixed width font
+
+    :type style: dict
+
+    :rtype: bool
+    """
+    font_family = ''
+    if 'font-family' in style:
+        font_family = style['font-family']
+    if 'courier new' == font_family or 'consolas' == font_family:
+        return True
+
+    return False
+
+
+def list_numbering_start(attrs):
+    """
+    Extract numbering from list element attributes
+
+    :type attrs: dict
+
+    :rtype: int or None
+    """
+    if 'start' in attrs:
+        try:
+            return int(attrs['start']) - 1
+        except ValueError:
+            pass
+
+    return 0
+
+
+def reformat_table(lines, right_margin, columns):
+    """
+    Given the lines of a table
+    padds the cells and returns the new lines
+    """
+    if not lines:
+        return lines
+    # find the maximum width of the columns
+    max_width = [len(x.rstrip()) + right_margin for x in lines[0].split('│')]
+    max_cols = len(max_width)
+    for line in lines:
+        cols = [x.rstrip() for x in line.split('│')]
+        num_cols = len(cols)
+
+        # don't drop any data if colspan attributes result in unequal lengths
+        if num_cols < max_cols:
+            cols += [''] * (max_cols - num_cols)
+        elif max_cols < num_cols:
+            max_width += [
+                len(x) + right_margin for x in
+                cols[-(num_cols - max_cols):]
+            ]
+            max_cols = num_cols
+
+        max_width = [max(len(x) + right_margin, old_len)
+                     for x, old_len in zip(cols, max_width)]
+
+    # reformat
+    new_lines = []
+    for line in lines:
+        cols = [x.rstrip() for x in line.split('│')]
+        if set(line.strip()) == set('─│'):
+            filler = '─'
+            new_cols = [x.rstrip() + (filler * (M - len(x.rstrip())))
+                        for x, M in zip(cols, max_width)]
+        else:
+            filler = ' '
+            new_cols = [x.rstrip() + (filler * (M - len(x.rstrip())))
+                        for x, M in zip(cols, max_width)]
+        new_lines.append('│'+'│'.join(new_cols)+'│')
+    # add horizontal rule above and below the table
+    length = len(new_lines[0]) - 2
+    new_lines.insert(0, '╭'+'─'*length+'╮')
+    new_lines.append('╰'+'─'*length+'╯')
+    # detect if we are overflowing the screen
+    if columns and max(map(len, new_lines)) > (columns-1):
+        # we are overflowing, undo the whole thing
+        new_lines = []
+        for line in lines:
+            for char in '─│╰╯╭╮':
+                new_line = line.replace(char,'').rstrip()
+            new_lines.append(new_line)
+    # compensate for invisible unicode chars
+    padded_new_lines = []
+    for line in new_lines:
+        if len(line) > 2 and line[-1] == '│':
+            inv = line.count('\N{INVISIBLE SEPARATOR}')
+            padded_new_lines.append(line[:-1]+' '*inv+line[-1])
+        else:
+            padded_new_lines.append(line)
+    return padded_new_lines
+
+
+def pad_tables_in_text(text, right_margin=1, columns=None):
+    """
+    Provide padding for tables in the text
+    """
+    lines = text.split('\n')
+    table_buffer, table_started = [], False
+    new_lines = []
+    for line in lines:
+        # Toggle table started
+        if (TABLE_MARKER_FOR_PAD in line):
+            table_started = not table_started
+            if not table_started:
+                table = reformat_table(table_buffer, right_margin, columns)
+                new_lines.extend(table)
+                table_buffer = []
+                new_lines.append('')
+            continue
+        # Process lines
+        if table_started:
+            table_buffer.append(line)
+        else:
+            new_lines.append(line)
+    new_text = '\n'.join(new_lines)
+    return new_text
+
+def convert_superscript(num):
+    str_ = ''
+    if num > 99:
+        mod = num//100
+        str_ = SUP[mod]
+        num  = num%100
+    if num > 9:
+        mod = num//10
+        str_ += SUP[mod]
+        num  = num%10
+    str_ += SUP[num]
+    return str_
 
 
 class HTML2Text(HTMLParser.HTMLParser):
@@ -48,18 +348,18 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.split_next_td = False
         self.td_count = 0
         self.table_start = False
-        self.inline_links = config.INLINE_LINKS  # covered in cli
+        self.inline_links = INLINE_LINKS  # covered in cli
         self.ul_item_mark = '-'  # covered in cli
         self.emphasis_mark_start = '\N{INVISIBLE SEPARATOR}' #\u2063
         self.emphasis_mark_end = '\N{INVISIBLE SEPARATOR}'*2 #\u2063
         self.strong_mark_start = '\N{INVISIBLE SEPARATOR}' #\u2063
         self.strong_mark_end = '\N{INVISIBLE SEPARATOR}'*3 #\u2063
-        self.underline_mark_start = config.bcolors.UNDERLINE
-        self.underline_mark_end = config.bcolors.ENDC
+        self.underline_mark_start = bcolors.UNDERLINE
+        self.underline_mark_end = bcolors.ENDC
         self.link_begin_mark = '\N{INVISIBLE SEPARATOR}' #\u2063
         self.link_end_mark = '\N{INVISIBLE SEPARATOR}' #
         self.image_placeholder_char = '\N{HEAVY SPARKLE}' #\u2748
-        self.pad_tables = config.PAD_TABLES  # covered in cli
+        self.pad_tables = PAD_TABLES  # covered in cli
         self.tag_callback = None
 
         if out is None:  # pragma: no cover
@@ -80,7 +380,7 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.maybe_automatic_link = None
         self.div_was_inline = False
         self.empty_link = False
-        self.absolute_url_matcher = config.RE_ABSOLUTE_LINK
+        self.absolute_url_matcher = RE_ABSOLUTE_LINK
         self.acount = 0
         self.list = []
         self.blockquote = 0
@@ -117,11 +417,11 @@ class HTML2Text(HTMLParser.HTMLParser):
             outtext = pad_tables_in_text(outtext, columns=self.columns)
 
         # reduce >2 empty lines to only one empty line
-        outtext = config.RE_MULTIPLE_EMPTY_LINES.sub('\n\n', outtext)
+        outtext = RE_MULTIPLE_EMPTY_LINES.sub('\n\n', outtext)
         # do the same for lines with only blockquote char and spaces
-        outtext = config.RE_MULTIPLE_QUOTEEMPTY_LINES.sub('\g<QUOTE>', outtext)
+        outtext = RE_MULTIPLE_QUOTEEMPTY_LINES.sub('\g<QUOTE>', outtext)
         # remove trailing spaces
-        outtext = config.RE_TRAILING_SPACES.sub('', outtext)
+        outtext = RE_TRAILING_SPACES.sub('', outtext)
         fl = open('/tmp/test.txt', 'w')
         fl.write(outtext)
         fl.close()
@@ -201,7 +501,7 @@ class HTML2Text(HTMLParser.HTMLParser):
 
         # google and others may mark a font's weight as `bold` or `700`
         bold = False
-        for bold_marker in config.BOLD_TEXT_STYLE_VALUES:
+        for bold_marker in BOLD_TEXT_STYLE_VALUES:
             bold = (bold_marker in tag_emphasis
                     and bold_marker not in parent_emphasis)
             if bold:
@@ -332,7 +632,7 @@ class HTML2Text(HTMLParser.HTMLParser):
 
         def no_preceding_space(self):
             return (self.preceding_data
-                    and config.RE_PRECEDING_SPACE.match(self.preceding_data[-1]))
+                    and RE_PRECEDING_SPACE.match(self.preceding_data[-1]))
 
         if tag in ['em', 'i']:
             if start:
@@ -477,11 +777,11 @@ class HTML2Text(HTMLParser.HTMLParser):
                 if start:
                     self.table_start = True
                     if self.pad_tables:
-                        self.o("<" + config.TABLE_MARKER_FOR_PAD + ">")
+                        self.o("<" + TABLE_MARKER_FOR_PAD + ">")
                         self.o("  \n")
                 else:
                     if self.pad_tables:
-                        self.o("</" + config.TABLE_MARKER_FOR_PAD + ">")
+                        self.o("</" + TABLE_MARKER_FOR_PAD + ">")
                         self.o("  \n")
             if tag in ["td", "th"] and start:
                 if self.split_next_td:
@@ -539,7 +839,7 @@ class HTML2Text(HTMLParser.HTMLParser):
                 # This is a very dangerous call ... it could mess up
                 # all handling of &nbsp; when not handled properly
                 # (see entityref)
-                data = config.RE_SPACE_GENERAL.sub(' ', data)
+                data = RE_SPACE_GENERAL.sub(' ', data)
                 if data and data[0] == ' ':
                     self.space = 1
                     data = data[1:]
@@ -627,7 +927,7 @@ class HTML2Text(HTMLParser.HTMLParser):
             self.stressed = False
             self.preceding_stressed = True
         elif (self.preceding_stressed
-              and config.RE_NON_PUNCT.match(data[0])
+              and RE_NON_PUNCT.match(data[0])
               and not hn(self.current_tag)
               and self.current_tag not in ['a', 'code', 'pre']):
             # should match a letter or common punctuation
@@ -706,9 +1006,96 @@ def html2text(html, baseurl=''):
     return h.handle(html)
 
 
+def main():
+    baseurl = ''
+    p = optparse.OptionParser(
+        '%prog [filename]',
+        version='%prog ' + ".".join(map(str, __version__))
+    )
+    p.add_option(
+        "--columns",
+        dest="columns",
+        action="store",
+        type="int",
+        default=0,
+        help="columns"
+    )
+    p.add_option(
+        "--encoding",
+        dest="encoding",
+        action="store",
+        type="string",
+        default="utf-8",
+        help="input encoding"
+    )
+    p.add_option(
+        "--pad-tables",
+        dest="pad_tables",
+        action="store_true",
+        default=PAD_TABLES,
+        help="pad the cells to equal column width in tables"
+    )
+    p.add_option(
+        "--reference-links",
+        dest="inline_links",
+        action="store_false",
+        default=INLINE_LINKS,
+        help="use reference style links instead of inline links"
+    )
+    p.add_option(
+        "--decode-errors",
+        dest="decode_errors",
+        action="store",
+        type="string",
+        default=DECODE_ERRORS,
+        help="What to do in case of decode errors.'ignore', 'strict' and "
+             "'replace' are acceptable values"
+    )
+    (options, args) = p.parse_args()
 
+    encoding = options.encoding
+    if encoding == 'us-ascii':
+        encoding = 'utf-8'
+
+    try:
+        if len(args) == 0:
+            data = io.TextIOWrapper(sys.stdin.buffer,
+                                    encoding=encoding,
+                                    errors=options.decode_errors).read()
+        elif len(args) == 1:
+            data = open(args[0], 'rt', encoding=encoding,
+                                       errors=options.decode_errors).read()
+        else:
+            p.error('Too many arguments')
+    except UnicodeDecodeError as err:
+        sys.stderr.write('Decoding error! Use --decode-errors=ignore!')
+        raise err
+
+    # handle columns
+    if not options.columns:
+        # try to read columns from enviroment
+        try:
+            columns = int(os.environ['COLUMNS'])-1
+        except KeyError:
+            columns = 79
+    else:
+        columns = int(options.columns) -1
+
+    # remove tags that we can't parse properly beforehand
+    # word break opportunity tag
+    data = data.replace('<wbr>', '')
+    data = data.replace('<wbr class="">', '')
+    # zero-width space
+    data = data.replace('\u200b', '')
+
+    h = HTML2Text(baseurl=baseurl)
+
+
+    h.columns = options.columns
+    h.inline_links = options.inline_links
+    h.pad_tables = options.pad_tables
+
+    sys.stdout.buffer.write(h.handle(data).encode('utf-8'))
 
 if __name__ == "__main__":
-    from html2text.cli import main
-
     main()
