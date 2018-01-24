@@ -1,8 +1,28 @@
 #!/usr/bin/python3
 # coding: utf-8
-"""html2text: Turn HTML into equivalent Markdown-structured text."""
-from __future__ import division
-from __future__ import unicode_literals
+"""html2mutt - convert html mail to text compatible with mutt builtin pager"""
+###############################################################################
+# Copyright (C) 2018  Tiziano Zito <opossumnano@gmail.com>
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+################################################################################
+# This program is a stripped down and dumbed down version with some enhancements
+# of html2text, a script to convert HTML to Markdown, originally written by
+# Aaron Swartz, and currently mainteined by Alireza Savand. The original can be
+# found at https://github.com/Alir3z4/html2text/
+################################################################################
 import urllib.parse as urlparse
 import html.parser as HTMLParser
 import html.entities as htmlentitydefs
