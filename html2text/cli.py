@@ -10,8 +10,6 @@ from html2text.utils import wrapwrite, wrap_read
 
 def main():
     baseurl = ''
-
-
     p = optparse.OptionParser(
         '%prog [(filename|url) [encoding] [columns]]',
         version='%prog ' + ".".join(map(str, __version__))

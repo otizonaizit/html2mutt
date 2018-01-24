@@ -1,8 +1,7 @@
 import sys
+import html.entities as htmlentitydefs
 
 from html2text import config
-from html2text.compat import htmlentitydefs
-
 
 def name2cp(k):
     """Return sname to codepoint"""

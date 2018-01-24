@@ -3,11 +3,12 @@
 """html2text: Turn HTML into equivalent Markdown-structured text."""
 from __future__ import division
 from __future__ import unicode_literals
+import urllib.parse as urlparse
+import html.parser as HTMLParser
+
 import re
 import sys
 
-
-from html2text.compat import urlparse, HTMLParser
 from html2text import config
 
 from html2text.utils import (
