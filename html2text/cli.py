@@ -86,14 +86,6 @@ def main():
         help="use an asterisk rather than an underscore for emphasized text"
     )
     p.add_option(
-        "-b", "--body-width",
-        dest="body_width",
-        action="store",
-        type="int",
-        default=config.BODY_WIDTH,
-        help="number of characters per output line, 0 for no wrap"
-    )
-    p.add_option(
         "-i", "--google-list-indent",
         dest="list_indent",
         action="store",
@@ -237,7 +229,6 @@ def main():
         h.strong_mark = '__'
 
     h.columns = columns
-    h.body_width = options.body_width
     h.google_list_indent = options.list_indent
     h.ignore_emphasis = options.ignore_emphasis
     h.ignore_links = options.ignore_links

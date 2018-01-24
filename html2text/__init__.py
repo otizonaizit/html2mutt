@@ -31,7 +31,7 @@ __version__ = (2017, 10, 4)
 
 
 class HTML2Text(HTMLParser.HTMLParser):
-    def __init__(self, out=None, baseurl='', bodywidth=config.BODY_WIDTH):
+    def __init__(self, out=None, baseurl=''):
         """
         Input parameters:
             out: possible custom replacement for self.outtextf (which
@@ -48,7 +48,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.td_count = 0
         self.table_start = False
         self.links_each_paragraph = config.LINKS_EACH_PARAGRAPH
-        self.body_width = bodywidth  # covered in cli
         self.skip_internal_links = config.SKIP_INTERNAL_LINKS  # covered in cli
         self.inline_links = config.INLINE_LINKS  # covered in cli
         self.ignore_links = config.IGNORE_ANCHORS  # covered in cli
@@ -772,10 +771,8 @@ class HTML2Text(HTMLParser.HTMLParser):
 
 
 
-def html2text(html, baseurl='', bodywidth=None):
-    if bodywidth is None:
-        bodywidth = config.BODY_WIDTH
-    h = HTML2Text(baseurl=baseurl, bodywidth=bodywidth)
+def html2text(html, baseurl=''):
+    h = HTML2Text(baseurl=baseurl)
 
     return h.handle(html)
 

@@ -6,9 +6,6 @@ TABLE_MARKER_FOR_PAD = "special_marker_for_table_padding"
 # Put the links after each paragraph instead of at the end.
 LINKS_EACH_PARAGRAPH = 0
 
-# Wrap long lines at position. 0 for no wrapping. (Requires Python 2.3.)
-BODY_WIDTH = 0
-
 # Don't show internal links (href="#local-anchor") -- corresponding link
 # targets won't be visible in the plain text file anyway.
 SKIP_INTERNAL_LINKS = True
