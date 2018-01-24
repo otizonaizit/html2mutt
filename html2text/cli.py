@@ -241,7 +241,6 @@ def main():
     h.google_list_indent = options.list_indent
     h.ignore_emphasis = options.ignore_emphasis
     h.ignore_links = options.ignore_links
-    h.protect_links = options.protect_links
     h.ignore_images = options.ignore_images
     h.images_to_alt = options.images_to_alt
     h.google_doc = options.google_doc
@@ -254,7 +253,6 @@ def main():
     h.skip_internal_links = options.skip_internal_links
     h.links_each_paragraph = options.links_each_paragraph
     h.mark_code = options.mark_code
-    h.wrap_links = options.wrap_links
     h.pad_tables = options.pad_tables
     h.default_image_alt = options.default_image_alt
 
