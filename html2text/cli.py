@@ -31,13 +31,6 @@ def main():
         help="use reference style links instead of inline links"
     )
     p.add_option(
-        "-e", "--asterisk-emphasis",
-        action="store_true",
-        dest="em_style_asterisk",
-        default=True,
-        help="use an asterisk rather than an underscore for emphasized text"
-    )
-    p.add_option(
         "-s", "--hide-strikethrough",
         action="store_true",
         dest="hide_strikethrough",
@@ -113,9 +106,6 @@ def main():
     h = HTML2Text(baseurl=baseurl)
 
     h.ul_item_mark = '-'
-    if options.em_style_asterisk:
-        h.emphasis_mark = '*'
-        h.strong_mark = '__'
 
     h.columns = columns
     h.hide_strikethrough = options.hide_strikethrough
