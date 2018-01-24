@@ -1,5 +1,6 @@
 import io
 import optparse
+import os
 import sys
 import warnings
 
@@ -10,8 +11,16 @@ from html2text.utils import wrapwrite, wrap_read
 def main():
     baseurl = ''
     p = optparse.OptionParser(
-        '%prog [(filename|url) [encoding] [columns]]',
+        '%prog [filename]',
         version='%prog ' + ".".join(map(str, __version__))
+    )
+    p.add_option(
+        "--columns",
+        dest="columns",
+        action="store",
+        type="int",
+        default=0,
+        help="columns"
     )
     p.add_option(
         "--encoding",
@@ -47,12 +56,6 @@ def main():
     (options, args) = p.parse_args()
 
     encoding = options.encoding
-    # process input
-        columns = int(args[2])-1
-    if len(args) > 3:
-        p.error('Too many arguments')
-
-    # just be safe
     if encoding == 'us-ascii':
         encoding = 'utf-8'
 
@@ -71,8 +74,14 @@ def main():
         raise err
 
     # handle columns
+    if not options.columns:
+        # try to read columns from enviroment
         try:
             columns = int(os.environ['COLUMNS'])-1
+        except KeyError:
+            columns = 79
+    else:
+        columns = int(options.columns) -1
 
     # remove tags that we can't parse properly beforehand
     # word break opportunity tag
@@ -85,7 +94,7 @@ def main():
 
     h.ul_item_mark = '-'
 
-    h.columns = columns
+    h.columns = options.columns
     h.inline_links = options.inline_links
     h.pad_tables = options.pad_tables
 
