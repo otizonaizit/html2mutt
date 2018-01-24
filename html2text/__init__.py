@@ -58,7 +58,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.link_begin_mark = '\N{INVISIBLE SEPARATOR}' #\u2063
         self.link_end_mark = '\N{INVISIBLE SEPARATOR}' #
         self.image_placeholder_char = '\N{HEAVY SPARKLE}' #\u2748
-        self.hide_strikethrough = False  # covered in cli
         self.pad_tables = config.PAD_TABLES  # covered in cli
         self.tag_callback = None
 
@@ -199,10 +198,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         tag_emphasis = google_text_emphasis(tag_style)
         parent_emphasis = google_text_emphasis(parent_style)
 
-        # handle Google's text emphasis
-        strikethrough = 'line-through' in \
-                        tag_emphasis and self.hide_strikethrough
-
         # google and others may mark a font's weight as `bold` or `700`
         bold = False
         for bold_marker in config.BOLD_TEXT_STYLE_VALUES:
@@ -220,8 +215,6 @@ class HTML2Text(HTMLParser.HTMLParser):
             # in order not to output qualifiers unnecessarily
             if bold or italic or fixed:
                 self.emphasis += 1
-            if strikethrough:
-                self.quiet += 1
             if italic:
                 self.o(self.emphasis_mark_start)
                 self.drop_white_space += 1
@@ -259,8 +252,6 @@ class HTML2Text(HTMLParser.HTMLParser):
             # space is only allowed after *all* emphasis marks
             if (bold or italic) and not self.emphasis:
                 self.o(" ")
-            if strikethrough:
-                self.quiet -= 1
 
     def handle_tag(self, tag, attrs, start):
         self.current_tag = tag

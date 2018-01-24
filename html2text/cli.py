@@ -31,14 +31,6 @@ def main():
         help="use reference style links instead of inline links"
     )
     p.add_option(
-        "-s", "--hide-strikethrough",
-        action="store_true",
-        dest="hide_strikethrough",
-        default=False,
-        help="hide strike-through text. only relevant when -g is "
-             "specified as well"
-    )
-    p.add_option(
         "--decode-errors",
         dest="decode_errors",
         action="store",
@@ -108,7 +100,6 @@ def main():
     h.ul_item_mark = '-'
 
     h.columns = columns
-    h.hide_strikethrough = options.hide_strikethrough
     h.inline_links = options.inline_links
     h.pad_tables = options.pad_tables
 
