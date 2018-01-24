@@ -74,7 +74,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         #self.link_end_mark = config.bcolors.ENDC
         self.link_end_mark = '\N{INVISIBLE SEPARATOR}' #
         self.image_placeholder_char = '\N{HEAVY SPARKLE}' #\u2748
-        self.single_line_break = config.SINGLE_LINE_BREAK  # covered in cli
         self.use_automatic_links = config.USE_AUTOMATIC_LINKS  # covered in cli
         self.hide_strikethrough = False  # covered in cli
         self.mark_code = config.MARK_CODE
@@ -581,7 +580,7 @@ class HTML2Text(HTMLParser.HTMLParser):
         if tag == 'div':
             self.p_p = 1
         else:
-            self.p_p = 1 if self.single_line_break else 2
+            self.p_p = 2
 
     def soft_br(self):
         "Soft breaks"

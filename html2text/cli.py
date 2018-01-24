@@ -117,16 +117,6 @@ def main():
              "while keeping rows."
     )
     p.add_option(
-        "--single-line-break",
-        action="store_true",
-        dest="single_line_break",
-        default=config.SINGLE_LINE_BREAK,
-        help=(
-            "Use a single line break after a block element rather than two "
-            "line breaks. NOTE: Requires --body-width=0"
-        )
-    )
-    p.add_option(
         "--no-automatic-links",
         action="store_false",
         dest="use_automatic_links",
@@ -238,7 +228,6 @@ def main():
     h.hide_strikethrough = options.hide_strikethrough
     h.bypass_tables = options.bypass_tables
     h.ignore_tables = options.ignore_tables
-    h.single_line_break = options.single_line_break
     h.inline_links = options.inline_links
     h.use_automatic_links = options.use_automatic_links
     h.skip_internal_links = options.skip_internal_links

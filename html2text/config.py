@@ -56,10 +56,6 @@ BYPASS_TABLES = False
 IGNORE_TABLES = False
 
 
-# Use a single line break after a block element rather than two line breaks.
-# NOTE: Requires body width setting to be 0.
-SINGLE_LINE_BREAK = False
-
 class bcolors:  # pragma: no cover
     HEADER = '\033[35m'
     OKBLUE = '\033[34m'
