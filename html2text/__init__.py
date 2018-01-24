@@ -50,7 +50,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.links_each_paragraph = config.LINKS_EACH_PARAGRAPH
         self.skip_internal_links = config.SKIP_INTERNAL_LINKS  # covered in cli
         self.inline_links = config.INLINE_LINKS  # covered in cli
-        self.ignore_tables = config.IGNORE_TABLES  # covered in cli
         self.ul_item_mark = '*'  # covered in cli
         self.emphasis_mark = '_'  # covered in cli
 #        self.emphasis_mark_start = config.bcolors.YELLOW
@@ -495,44 +494,33 @@ class HTML2Text(HTMLParser.HTMLParser):
                 self.start = 1
 
         if tag in ["table", "tr", "td", "th"]:
-            if self.ignore_tables:
-                if tag == 'tr':
-                    if start:
-                        pass
-                    else:
-                        self.soft_br()
+            if tag == "table":
+                if start:
+                    self.table_start = True
+                    if self.pad_tables:
+                        self.o("<" + config.TABLE_MARKER_FOR_PAD + ">")
+                        self.o("  \n")
                 else:
-                    pass
+                    if self.pad_tables:
+                        self.o("</" + config.TABLE_MARKER_FOR_PAD + ">")
+                        self.o("  \n")
+            if tag in ["td", "th"] and start:
+                if self.split_next_td:
+                    self.o("│ ")
+                self.split_next_td = True
 
-
-            else:
-                if tag == "table":
-                    if start:
-                        self.table_start = True
-                        if self.pad_tables:
-                            self.o("<" + config.TABLE_MARKER_FOR_PAD + ">")
-                            self.o("  \n")
-                    else:
-                        if self.pad_tables:
-                            self.o("</" + config.TABLE_MARKER_FOR_PAD + ">")
-                            self.o("  \n")
-                if tag in ["td", "th"] and start:
-                    if self.split_next_td:
-                        self.o("│ ")
-                    self.split_next_td = True
-
-                if tag == "tr" and start:
-                    self.td_count = 0
-                if tag == "tr" and not start:
-                    self.split_next_td = False
-                    self.soft_br()
-                if tag == "tr" and not start and self.table_start:
-                    # Underline table header
-                    self.o("│".join(["───"] * self.td_count))
-                    self.soft_br()
-                    self.table_start = False
-                if tag in ["td", "th"] and start:
-                    self.td_count += 1
+            if tag == "tr" and start:
+                self.td_count = 0
+            if tag == "tr" and not start:
+                self.split_next_td = False
+                self.soft_br()
+            if tag == "tr" and not start and self.table_start:
+                # Underline table header
+                self.o("│".join(["───"] * self.td_count))
+                self.soft_br()
+                self.table_start = False
+            if tag in ["td", "th"] and start:
+                self.td_count += 1
 
         if tag == "pre":
             if start:

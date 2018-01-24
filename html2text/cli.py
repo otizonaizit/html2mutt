@@ -46,14 +46,6 @@ def main():
              "specified as well"
     )
     p.add_option(
-        "--ignore-tables",
-        action="store_true",
-        dest="ignore_tables",
-        default=config.IGNORE_TABLES,
-        help="Ignore table-related tags (table, th, td, tr) "
-             "while keeping rows."
-    )
-    p.add_option(
         "--no-automatic-links",
         action="store_false",
         dest="use_automatic_links",
@@ -148,7 +140,6 @@ def main():
 
     h.columns = columns
     h.hide_strikethrough = options.hide_strikethrough
-    h.ignore_tables = options.ignore_tables
     h.inline_links = options.inline_links
     h.use_automatic_links = options.use_automatic_links
     h.skip_internal_links = options.skip_internal_links
