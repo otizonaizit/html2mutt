@@ -5,8 +5,6 @@ import sys
 import warnings
 
 from html2text import HTML2Text, config, __version__
-from html2text.utils import wrapwrite, wrap_read
-
 
 def main():
     baseurl = ''
@@ -97,4 +95,4 @@ def main():
     h.inline_links = options.inline_links
     h.pad_tables = options.pad_tables
 
-    wrapwrite(h.handle(data))
+    sys.stdout.buffer.write(h.handle(data).encode('utf-8'))

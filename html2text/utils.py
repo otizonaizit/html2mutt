@@ -165,26 +165,6 @@ def list_numbering_start(attrs):
     return 0
 
 
-
-
-def wrapwrite(text):
-    text = text.encode('utf-8')
-    try:  # Python3
-        sys.stdout.buffer.write(text)
-    except AttributeError:
-        sys.stdout.write(text)
-
-
-def wrap_read():  # pragma: no cover
-    """
-    :rtype: str
-    """
-    try:
-        return sys.stdin.read()
-    except AttributeError:
-        return sys.stdin.buffer.read()
-
-
 def reformat_table(lines, right_margin, columns):
     """
     Given the lines of a table
