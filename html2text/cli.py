@@ -38,13 +38,6 @@ def main():
         help="use reference style links instead of inline links"
     )
     p.add_option(
-        "-g", "--google-doc",
-        action="store_true",
-        dest="google_doc",
-        default=False,
-        help="convert an html-exported Google Document"
-    )
-    p.add_option(
         "-d", "--dash-unordered-list",
         action="store_true",
         dest="ul_style_dash",
@@ -57,14 +50,6 @@ def main():
         dest="em_style_asterisk",
         default=True,
         help="use an asterisk rather than an underscore for emphasized text"
-    )
-    p.add_option(
-        "-i", "--google-list-indent",
-        dest="list_indent",
-        action="store",
-        type="int",
-        default=config.GOOGLE_LIST_INDENT,
-        help="number of pixels Google indents nested lists"
     )
     p.add_option(
         "-s", "--hide-strikethrough",
@@ -185,8 +170,6 @@ def main():
         h.strong_mark = '__'
 
     h.columns = columns
-    h.google_list_indent = options.list_indent
-    h.google_doc = options.google_doc
     h.hide_strikethrough = options.hide_strikethrough
     h.ignore_tables = options.ignore_tables
     h.inline_links = options.inline_links
