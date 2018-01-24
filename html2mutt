@@ -35,6 +35,7 @@ import os
 import sys
 import warnings
 
+__version__ = '0.1'
 SUP = ['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹']
 
 # Marker to use for marking tables for padding post processing
@@ -85,7 +86,6 @@ except NameError:
     # python3 uses chr
     nochr = str('')
 
-__version__ = (2017, 10, 4)
 
 def name2cp(k):
     """Return sname to codepoint"""
