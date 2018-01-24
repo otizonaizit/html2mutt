@@ -50,7 +50,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.links_each_paragraph = config.LINKS_EACH_PARAGRAPH
         self.skip_internal_links = config.SKIP_INTERNAL_LINKS  # covered in cli
         self.inline_links = config.INLINE_LINKS  # covered in cli
-        self.images_to_alt = config.IMAGES_TO_ALT  # covered in cli
         self.bypass_tables = config.BYPASS_TABLES  # covered in cli
         self.ignore_tables = config.IGNORE_TABLES  # covered in cli
         self.ul_item_mark = '*'  # covered in cli
@@ -450,12 +449,7 @@ class HTML2Text(HTMLParser.HTMLParser):
         if tag == "img" and start:
             if 'src' in attrs:
                 alt = attrs.get('alt') or self.default_image_alt
-                # If we have images_to_alt, we discard the image itself,
-                # considering only the alt text.
-                if self.images_to_alt:
-                    self.o(alt)
-                else:
-                    self.o(self.image_placeholder_char + alt )
+                self.o(self.image_placeholder_char + alt )
 
         if tag == 'dl' and start:
             self.p()
