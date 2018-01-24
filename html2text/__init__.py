@@ -53,7 +53,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.ignore_links = config.IGNORE_ANCHORS  # covered in cli
         self.ignore_images = config.IGNORE_IMAGES  # covered in cli
         self.images_to_alt = config.IMAGES_TO_ALT  # covered in cli
-        self.ignore_emphasis = config.IGNORE_EMPHASIS  # covered in cli
         self.bypass_tables = config.BYPASS_TABLES  # covered in cli
         self.ignore_tables = config.IGNORE_TABLES  # covered in cli
         self.ul_item_mark = '*'  # covered in cli
@@ -361,28 +360,28 @@ class HTML2Text(HTMLParser.HTMLParser):
             return (self.preceding_data
                     and config.RE_PRECEDING_SPACE.match(self.preceding_data[-1]))
 
-        if tag in ['em', 'i'] and not self.ignore_emphasis:
+        if tag in ['em', 'i']:
             if start:
                 self.o(self.emphasis_mark_start)
                 self.stressed = True
             else:
                 self.o(self.emphasis_mark_end)
 
-        if tag in ['u'] and not self.ignore_emphasis:
+        if tag in ['u']:
             if start:
                self.o(self.underline_mark_start)
                self.stressed = True
             else:
                 self.o(self.underline_mark_end)
 
-        if tag in ['strong', 'b'] and not self.ignore_emphasis:
+        if tag in ['strong', 'b']:
             if start:
                self.o(self.strong_mark_start)
                self.stressed = True
             else:
                 self.o(self.strong_mark_end)
 
-        if tag in ['del', 'strike', 's'] and not self.ignore_emphasis:
+        if tag in ['del', 'strike', 's']:
             strike = '~~'
 
             self.o(strike)

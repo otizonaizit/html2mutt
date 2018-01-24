@@ -31,13 +31,6 @@ def main():
         help="pad the cells to equal column width in tables"
     )
     p.add_option(
-        "--ignore-emphasis",
-        dest="ignore_emphasis",
-        action="store_true",
-        default=config.IGNORE_EMPHASIS,
-        help="don't include any formatting for emphasis"
-    )
-    p.add_option(
         "--reference-links",
         dest="inline_links",
         action="store_false",
@@ -220,7 +213,6 @@ def main():
 
     h.columns = columns
     h.google_list_indent = options.list_indent
-    h.ignore_emphasis = options.ignore_emphasis
     h.ignore_links = options.ignore_links
     h.ignore_images = options.ignore_images
     h.images_to_alt = options.images_to_alt
