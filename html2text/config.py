@@ -3,10 +3,6 @@ import re
 # Marker to use for marking tables for padding post processing
 TABLE_MARKER_FOR_PAD = "special_marker_for_table_padding"
 
-# Put the links after each paragraph instead of at the end.
-LINKS_EACH_PARAGRAPH = 0
-
-
 # Use inline, rather than reference, formatting for images and links
 INLINE_LINKS = False
 

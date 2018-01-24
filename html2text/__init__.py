@@ -47,7 +47,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.split_next_td = False
         self.td_count = 0
         self.table_start = False
-        self.links_each_paragraph = config.LINKS_EACH_PARAGRAPH
         self.inline_links = config.INLINE_LINKS  # covered in cli
         self.ul_item_mark = '*'  # covered in cli
         self.emphasis_mark = '_'  # covered in cli
@@ -609,8 +608,7 @@ class HTML2Text(HTMLParser.HTMLParser):
                     self.out(' ')
                 self.space = 0
 
-            if self.a and ((self.p_p == 2 and self.links_each_paragraph) or
-                           force == "end"):
+            if self.a and force == "end":
                 if force == "end":
                     self.out("\n")
 
