@@ -50,7 +50,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.links_each_paragraph = config.LINKS_EACH_PARAGRAPH
         self.skip_internal_links = config.SKIP_INTERNAL_LINKS  # covered in cli
         self.inline_links = config.INLINE_LINKS  # covered in cli
-        self.ignore_links = config.IGNORE_ANCHORS  # covered in cli
         self.ignore_images = config.IGNORE_IMAGES  # covered in cli
         self.images_to_alt = config.IMAGES_TO_ALT  # covered in cli
         self.bypass_tables = config.BYPASS_TABLES  # covered in cli
@@ -409,7 +408,7 @@ class HTML2Text(HTMLParser.HTMLParser):
             self.o(self.link_end_mark + '({url}{title})'.format(url=url,
                                             title=title))
 
-        if tag == "a" and not self.ignore_links:
+        if tag == "a":
             if start:
                 if 'href' in attrs and \
                     attrs['href'] is not None and not \
