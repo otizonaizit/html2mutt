@@ -46,13 +46,6 @@ def main():
              "specified as well"
     )
     p.add_option(
-        "--no-automatic-links",
-        action="store_false",
-        dest="use_automatic_links",
-        default=config.USE_AUTOMATIC_LINKS,
-        help="Do not use automatic links wherever applicable"
-    )
-    p.add_option(
         "--decode-errors",
         dest="decode_errors",
         action="store",
@@ -127,7 +120,6 @@ def main():
     h.columns = columns
     h.hide_strikethrough = options.hide_strikethrough
     h.inline_links = options.inline_links
-    h.use_automatic_links = options.use_automatic_links
     h.pad_tables = options.pad_tables
 
     wrapwrite(h.handle(data))

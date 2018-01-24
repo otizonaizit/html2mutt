@@ -12,10 +12,6 @@ BOLD_TEXT_STYLE_VALUES = ('bold', '700', '800', '900')
 DECODE_ERRORS = 'strict'
 PAD_TABLES = True
 
-# Convert links with same href and text to <href> format
-# if they are absolute links
-USE_AUTOMATIC_LINKS = True
-
 # For checking space-only lines on line 771
 RE_SPACE = re.compile(r'\s\+')
 RE_SPACE_GENERAL = re.compile(r'\s+')

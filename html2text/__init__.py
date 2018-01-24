@@ -66,7 +66,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         #self.link_end_mark = config.bcolors.ENDC
         self.link_end_mark = '\N{INVISIBLE SEPARATOR}' #
         self.image_placeholder_char = '\N{HEAVY SPARKLE}' #\u2748
-        self.use_automatic_links = config.USE_AUTOMATIC_LINKS  # covered in cli
         self.hide_strikethrough = False  # covered in cli
         self.pad_tables = config.PAD_TABLES  # covered in cli
         self.tag_callback = None
@@ -656,31 +655,25 @@ class HTML2Text(HTMLParser.HTMLParser):
 
         if self.maybe_automatic_link is not None:
             href = self.maybe_automatic_link
-            if self.use_automatic_links:
-                # massage href to remove mailto links
-                href = href.replace('mailto:', '')
-                # if href is a telephone number
-                if href.startswith('tel:'):
-                    href = data
-                # data sometimes still contains spaces
-                datacmp = data.strip()
-                # href is equivalent to data if they only differ for a final '/'
-                # check also if data is only missing the http/s part
-                conditions = (href == datacmp,
-                              href[7:] == datacmp,
-                              href[8:] == datacmp,
-                              href[:-1] == datacmp and href[-1] == '/',
-                              href == datacmp[:-1] and datacmp[-1] == '/',
-                              )
-                if any(conditions):
-                    self.o(data)
-                    self.empty_link = False
-                    return
-                else:
-                    #self.o("[")
-                    self.o(self.link_begin_mark)
-                    self.maybe_automatic_link = None
-                    self.empty_link = False
+            # massage href to remove mailto links
+            href = href.replace('mailto:', '')
+            # if href is a telephone number
+            if href.startswith('tel:'):
+                href = data
+            # data sometimes still contains spaces
+            datacmp = data.strip()
+            # href is equivalent to data if they only differ for a final '/'
+            # check also if data is only missing the http/s part
+            conditions = (href == datacmp,
+                          href[7:] == datacmp,
+                          href[8:] == datacmp,
+                          href[:-1] == datacmp and href[-1] == '/',
+                          href == datacmp[:-1] and datacmp[-1] == '/',
+                          )
+            if any(conditions):
+                self.o(data)
+                self.empty_link = False
+                return
             else:
                 #self.o("[")
                 self.o(self.link_begin_mark)
