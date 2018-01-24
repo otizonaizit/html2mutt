@@ -1,5 +1,0 @@
-coverage==4.4.1
-py==1.4.34
-pypandoc==1.4
-wheel==0.30.0
-flake8==3.4.1
