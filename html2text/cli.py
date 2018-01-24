@@ -31,13 +31,6 @@ def main():
         help="use reference style links instead of inline links"
     )
     p.add_option(
-        "-d", "--dash-unordered-list",
-        action="store_true",
-        dest="ul_style_dash",
-        default=True,
-        help="use a dash rather than a star for unordered list items"
-    )
-    p.add_option(
         "-e", "--asterisk-emphasis",
         action="store_true",
         dest="em_style_asterisk",
@@ -155,9 +148,7 @@ def main():
 
     h = HTML2Text(baseurl=baseurl)
 
-    # handle options
-    if options.ul_style_dash:
-        h.ul_item_mark = '-'
+    h.ul_item_mark = '-'
     if options.em_style_asterisk:
         h.emphasis_mark = '*'
         h.strong_mark = '__'
