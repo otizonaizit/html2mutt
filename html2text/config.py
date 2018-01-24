@@ -18,7 +18,6 @@ BOLD_TEXT_STYLE_VALUES = ('bold', '700', '800', '900')
 
 MARK_CODE = False
 DECODE_ERRORS = 'strict'
-DEFAULT_IMAGE_ALT = ''
 PAD_TABLES = True
 
 # Convert links with same href and text to <href> format

@@ -73,7 +73,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.hide_strikethrough = False  # covered in cli
         self.mark_code = config.MARK_CODE
         self.pad_tables = config.PAD_TABLES  # covered in cli
-        self.default_image_alt = config.DEFAULT_IMAGE_ALT  # covered in cli
         self.tag_callback = None
 
         if out is None:  # pragma: no cover
@@ -447,7 +446,7 @@ class HTML2Text(HTMLParser.HTMLParser):
 
         if tag == "img" and start:
             if 'src' in attrs:
-                alt = attrs.get('alt') or self.default_image_alt
+                alt = attrs.get('alt') or ''
                 self.o(self.image_placeholder_char + alt )
 
         if tag == 'dl' and start:
