@@ -14,6 +14,14 @@ def main():
         version='%prog ' + ".".join(map(str, __version__))
     )
     p.add_option(
+        "--encoding",
+        dest="encoding",
+        action="store",
+        type="string",
+        default="utf-8",
+        help="input encoding"
+    )
+    p.add_option(
         "--pad-tables",
         dest="pad_tables",
         action="store_true",
@@ -38,12 +46,8 @@ def main():
     )
     (options, args) = p.parse_args()
 
+    encoding = options.encoding
     # process input
-    encoding = None
-    columns = None
-    if len(args) > 1:
-        encoding = args[1]
-    if len(args) > 2:
         columns = int(args[2])-1
     if len(args) > 3:
         p.error('Too many arguments')
@@ -52,38 +56,23 @@ def main():
     if encoding == 'us-ascii':
         encoding = 'utf-8'
 
-    if len(args) > 0:  # pragma: no cover
-        file_ = args[0]
-
-        if file_ == '-':
-            data = io.TextIOWrapper(sys.stdin.buffer, encoding=encoding).read()
+    try:
+        if len(args) == 0:
+            data = io.TextIOWrapper(sys.stdin.buffer,
+                                    encoding=encoding,
+                                    errors=options.decode_errors).read()
+        elif len(args) == 1:
+            data = open(args[0], 'rt', encoding=encoding,
+                                       errors=options.decode_errors).read()
         else:
-            data = open(file_, 'rb').read()
+            p.error('Too many arguments')
+    except UnicodeDecodeError as err:
+        sys.stderr.write('Decoding error! Use --decode-errors=ignore!')
+        raise err
 
-        if encoding is None:
-            try:
-                from chardet import detect
-            except ImportError:
-                def detect(x):
-                    return {'encoding': 'utf-8'}
-            encoding = detect(data)['encoding']
-    else:
-        data = wrap_read()
-
-    if hasattr(data, 'decode'):
+    # handle columns
         try:
-            try:
-                data = data.decode(encoding, errors=options.decode_errors)
-            except TypeError:
-                # python 2.6.x does not have the errors option
-                data = data.decode(encoding)
-        except UnicodeDecodeError as err:
-            bcolors = config.bcolors
-            warning = bcolors.WARNING + "Warning:" + bcolors.ENDC
-            warning += ' Use the ' + bcolors.OKGREEN
-            warning += '--decode-errors=ignore' + bcolors.ENDC + 'flag.'
-            print(warning)
-            raise err
+            columns = int(os.environ['COLUMNS'])-1
 
     # remove tags that we can't parse properly beforehand
     # word break opportunity tag
