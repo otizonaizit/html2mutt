@@ -3,7 +3,6 @@ import optparse
 import sys
 import warnings
 
-from html2text.compat import urllib
 from html2text import HTML2Text, config, __version__
 from html2text.utils import wrapwrite, wrap_read
 
