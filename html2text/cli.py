@@ -53,13 +53,6 @@ def main():
         help="Do not use automatic links wherever applicable"
     )
     p.add_option(
-        "--no-skip-internal-links",
-        action="store_false",
-        dest="skip_internal_links",
-        default=config.SKIP_INTERNAL_LINKS,
-        help="Do not skip internal links"
-    )
-    p.add_option(
         "--links-after-para",
         action="store_true",
         dest="links_each_paragraph",
@@ -142,7 +135,6 @@ def main():
     h.hide_strikethrough = options.hide_strikethrough
     h.inline_links = options.inline_links
     h.use_automatic_links = options.use_automatic_links
-    h.skip_internal_links = options.skip_internal_links
     h.links_each_paragraph = options.links_each_paragraph
     h.pad_tables = options.pad_tables
 

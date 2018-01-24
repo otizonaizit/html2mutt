@@ -48,7 +48,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.td_count = 0
         self.table_start = False
         self.links_each_paragraph = config.LINKS_EACH_PARAGRAPH
-        self.skip_internal_links = config.SKIP_INTERNAL_LINKS  # covered in cli
         self.inline_links = config.INLINE_LINKS  # covered in cli
         self.ul_item_mark = '*'  # covered in cli
         self.emphasis_mark = '_'  # covered in cli
@@ -405,9 +404,7 @@ class HTML2Text(HTMLParser.HTMLParser):
         if tag == "a":
             if start:
                 if 'href' in attrs and \
-                    attrs['href'] is not None and not \
-                        (self.skip_internal_links and
-                            attrs['href'].startswith('#')):
+                    attrs['href'] is not None and not attrs['href'].startswith('#'):
                     self.astack.append(attrs)
                     self.maybe_automatic_link = attrs['href']
                     self.empty_link = True
