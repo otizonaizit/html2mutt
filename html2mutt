@@ -442,9 +442,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         outtext = RE_MULTIPLE_QUOTEEMPTY_LINES.sub('\g<QUOTE>', outtext)
         # remove trailing spaces
         outtext = RE_TRAILING_SPACES.sub('', outtext)
-        fl = open('/tmp/test.txt', 'w')
-        fl.write(outtext)
-        fl.close()
 
         return outtext
 
