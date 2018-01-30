@@ -361,7 +361,7 @@ class HTML2Text(HTMLParser.HTMLParser):
         """
         kwargs = {}
         if sys.version_info >= (3, 4):
-            kwargs['convert_charrefs'] = False
+            kwargs['convert_charrefs'] = True
         HTMLParser.HTMLParser.__init__(self, **kwargs)
 
         # Config options
