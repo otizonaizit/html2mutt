@@ -35,6 +35,8 @@ import os
 import sys
 import warnings
 
+import chardet
+
 __version__ = '0.1'
 SUP = ['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹']
 
@@ -1075,17 +1077,28 @@ def main():
     if encoding == 'us-ascii':
         encoding = 'utf-8'
 
+    # read input as binary strings
+    if not options.file:
+        data = sys.stdin.buffer.read()
+    else:
+        data = open(options.file, 'r').read()
+
+    # try to decode the binary string with the declared charset
     try:
-        if not options.file:
-            data = io.TextIOWrapper(sys.stdin.buffer,
-                                    encoding=encoding,
-                                    errors=options.decode_errors).read()
-        else:
-            data = open(options.file, 'rt', encoding=encoding,
-                                       errors=options.decode_errors).read()
+        data = data.decode(encoding=encoding, errors=options.decode_errors)
+        # if we have no exception, then the declared encoding was correct
+        have_to_guess = False
     except UnicodeDecodeError as err:
-        sys.stderr.write('Decoding error! Use --decode-errors=ignore!')
-        raise err
+        # the headers lied: let us try to detect the charset automatically
+        have_to_guess = True
+
+    if have_to_guess:
+        encoding = chardet.detect(data)['encoding']
+        try:
+            data = data.decode(encoding=encoding, errors=options.decode_errors)
+        except UnicodeDecodeError as err:
+            sys.stderr.write('Decoding error! Use --decode-errors=ignore!')
+            raise err
 
     # handle columns
     if not options.columns:
