@@ -82,13 +82,6 @@ except NameError:
     nochr = str('')
 
 
-def name2cp(k):
-    """Return sname to codepoint"""
-    if k == 'apos':
-        return ord("'")
-    return htmlentitydefs.name2codepoint[k]
-
-
 def hn(tag):
     if tag[0] == 'h' and len(tag) == 2:
         try:
