@@ -43,7 +43,6 @@ TABLE_MARKER_FOR_PAD = "special_marker_for_table_padding"
 # Values Google and others may use to indicate bold text
 BOLD_TEXT_STYLE_VALUES = ('bold', '700', '800', '900')
 
-DECODE_ERRORS = 'strict'
 PAD_TABLES = True
 
 # For checking space-only lines on line 771
@@ -1022,7 +1021,7 @@ def main():
         "--decode-errors",
         dest="decode_errors",
         action="store",
-        default=DECODE_ERRORS,
+        default="strict",
         help="What to do in case of decode errors.'ignore', 'strict' and "
              "'replace' are acceptable values"
     )
