@@ -366,7 +366,7 @@ class HTML2Text(HTMLParser.HTMLParser):
     def handle_endtag(self, tag):
         self.handle_tag(tag, None, 0)
 
-    def previousIndex(self, attrs):
+    def previous_index(self, attrs):
         """
         :type attrs: dict
 
@@ -612,7 +612,7 @@ class HTML2Text(HTMLParser.HTMLParser):
                             else:
                                 link_url(self, a['href'], title)
                         else:
-                            i = self.previousIndex(a)
+                            i = self.previous_index(a)
                             if i is not None:
                                 a = self.a[i]
                             else:
