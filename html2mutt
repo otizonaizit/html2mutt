@@ -53,14 +53,6 @@ RE_PRECEDING_SPACE = re.compile(r'[^\s]')
 RE_NON_PUNCT = re.compile(r'[^\s.!?]')
 RE_ABSOLUTE_LINK = re.compile(r'^[a-zA-Z+]+://')
 
-try:
-    chr = unichr
-    nochr = unicode('')
-except NameError:
-    # python3 uses chr
-    nochr = str('')
-
-
 def hn(tag):
     if tag[0] == 'h' and len(tag) == 2:
         try:
@@ -420,7 +412,7 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.pbr()
         self.o('', 0, 'end')
 
-        outtext = nochr.join(self.outtextlist)
+        outtext = ''.join(self.outtextlist)
 
         # Clear self.outtextlist to avoid memory leak of its content to
         # the next handling.
