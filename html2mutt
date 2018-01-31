@@ -487,7 +487,8 @@ class HTML2Text(HTMLParser.HTMLParser):
                 return  # prevent redundant emphasis marks on headers
 
         if tag in ['p', 'div']:
-            if start and tag == 'div' and 'style' in attrs and 'display:inline' in attrs['style']:
+            if start and tag == 'div' and 'style' in attrs \
+               and 'display:inline' in attrs['style']:
                 self.div_was_inline = True
             elif self.astack and tag == 'div':
                 pass
