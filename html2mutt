@@ -23,17 +23,14 @@
 # Aaron Swartz, and currently mainteined by Alireza Savand. The original can be
 # found at https://github.com/Alir3z4/html2text/
 ################################################################################
-import urllib.parse as urlparse
-import html.parser as HTMLParser
-import html.entities as htmlentitydefs
-
 import re
 import sys
-import io
 import argparse
 import os
 import sys
-import warnings
+
+import urllib.parse as urlparse
+import html.parser as HTMLParser
 
 import chardet
 
