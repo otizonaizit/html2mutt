@@ -49,7 +49,6 @@ RE_TRAILING_SPACES = re.compile(r'[^\S\r\n]+$', re.MULTILINE)
 RE_MULTIPLE_EMPTY_LINES = re.compile(r'\n\s*\n')
 RE_MULTIPLE_QUOTEEMPTY_LINES = re.compile(r'(?P<QUOTE>\>+ *\n){2,}')
 RE_NON_PUNCT = re.compile(r'[^\s.!?]')
-RE_ABSOLUTE_LINK = re.compile(r'^[a-zA-Z+]+://')
 
 def hn(tag):
     if tag[0] == 'h' and len(tag) == 2:
@@ -288,7 +287,6 @@ class HTML2Text(html.parser.HTMLParser):
         self.maybe_automatic_link = None
         self.div_was_inline = False
         self.empty_link = False
-        self.absolute_url_matcher = RE_ABSOLUTE_LINK
         self.acount = 0
         self.list = []
         self.blockquote = 0
