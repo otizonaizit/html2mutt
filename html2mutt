@@ -850,23 +850,20 @@ def main():
         action="store",
         type=int,
         default=0,
-        help="columns"
-    )
+        help="columns")
     p.add_argument(
         "--encoding",
         dest="encoding",
         action="store",
         default="utf-8",
-        help="input encoding"
-    )
+        help="input encoding")
     p.add_argument(
         "--decode-errors",
         dest="decode_errors",
         action="store",
         default="strict",
         help="What to do in case of decode errors.'ignore', 'strict' and "
-             "'replace' are acceptable values"
-    )
+             "'replace' are acceptable values")
     options = p.parse_args()
 
     encoding = options.encoding
