@@ -867,6 +867,8 @@ def main():
     options = p.parse_args()
 
     encoding = options.encoding
+
+    # just be safe and assume ascii is meant to be utf-8
     if encoding == 'us-ascii':
         encoding = 'utf-8'
 
