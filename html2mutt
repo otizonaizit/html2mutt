@@ -40,9 +40,6 @@ SUP = ['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹']
 # Marker to use for marking tables for padding post processing
 TABLE_MARKER_FOR_PAD = "special_marker_for_table_padding"
 
-# Use inline, rather than reference, formatting for images and links
-INLINE_LINKS = False
-
 # Values Google and others may use to indicate bold text
 BOLD_TEXT_STYLE_VALUES = ('bold', '700', '800', '900')
 
@@ -367,7 +364,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.split_next_td = False
         self.td_count = 0
         self.table_start = False
-        self.inline_links = INLINE_LINKS  # covered in cli
         self.ul_item_mark = '-'  # covered in cli
         self.emphasis_mark_start = '\N{INVISIBLE SEPARATOR}' #\u2063
         self.emphasis_mark_end = '\N{INVISIBLE SEPARATOR}'*2 #\u2063
@@ -1019,7 +1015,7 @@ def main():
         "--reference-links",
         dest="inline_links",
         action="store_false",
-        default=INLINE_LINKS,
+        default=False,
         help="use reference style links instead of inline links"
     )
     p.add_argument(
