@@ -845,18 +845,6 @@ class HTML2Text(html.parser.HTMLParser):
         self.preceding_data = data
         self.o(data, 1)
 
-    def unknown_decl(self, data):  # pragma: no cover
-        # TODO: what is this doing here?
-        pass
-
-
-
-
-def html2text(html):
-    h = HTML2Text()
-
-    return h.handle(html)
-
 
 def main():
     p = argparse.ArgumentParser(
