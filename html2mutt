@@ -53,18 +53,6 @@ RE_PRECEDING_SPACE = re.compile(r'[^\s]')
 RE_NON_PUNCT = re.compile(r'[^\s.!?]')
 RE_ABSOLUTE_LINK = re.compile(r'^[a-zA-Z+]+://')
 
-
-class bcolors:  # pragma: no cover
-    HEADER = '\033[35m'
-    OKBLUE = '\033[34m'
-    OKGREEN = '\033[32m'
-    WARNING = '\033[33m'
-    FAIL = '\033[31m'
-    YELLOW = '\033[33m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
 try:
     chr = unichr
     nochr = unicode('')
@@ -352,8 +340,8 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.emphasis_mark_end = '\N{INVISIBLE SEPARATOR}'*2 #\u2063
         self.strong_mark_start = '\N{INVISIBLE SEPARATOR}' #\u2063
         self.strong_mark_end = '\N{INVISIBLE SEPARATOR}'*3 #\u2063
-        self.underline_mark_start = bcolors.UNDERLINE
-        self.underline_mark_end = bcolors.ENDC
+        self.underline_mark_start = '\033[4m'
+        self.underline_mark_end = '\033[0m'
         self.link_begin_mark = '\N{INVISIBLE SEPARATOR}' #\u2063
         self.link_end_mark = '\N{INVISIBLE SEPARATOR}' #
         self.image_placeholder_char = '\N{HEAVY SPARKLE}' #\u2748
