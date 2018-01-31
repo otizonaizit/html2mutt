@@ -35,6 +35,7 @@ import html.parser as HTMLParser
 import chardet
 
 __version__ = '0.1'
+
 SUP = ['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹']
 
 # Marker to use for marking tables for padding post processing
@@ -42,8 +43,6 @@ TABLE_MARKER_FOR_PAD = "special_marker_for_table_padding"
 
 # Values Google and others may use to indicate bold text
 BOLD_TEXT_STYLE_VALUES = ('bold', '700', '800', '900')
-
-PAD_TABLES = True
 
 # For checking space-only lines on line 771
 RE_SPACE = re.compile(r'\s\+')
@@ -366,7 +365,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.link_begin_mark = '\N{INVISIBLE SEPARATOR}' #\u2063
         self.link_end_mark = '\N{INVISIBLE SEPARATOR}' #
         self.image_placeholder_char = '\N{HEAVY SPARKLE}' #\u2748
-        self.pad_tables = PAD_TABLES  # covered in cli
         self.tag_callback = None
 
         if out is None:  # pragma: no cover
@@ -420,8 +418,7 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.feed(data)
         self.feed("")
         outtext = self.close()
-        if self.pad_tables:
-            outtext = pad_tables_in_text(outtext, columns=self.columns)
+        outtext = pad_tables_in_text(outtext, columns=self.columns)
 
         # reduce >2 empty lines to only one empty line
         outtext = RE_MULTIPLE_EMPTY_LINES.sub('\n\n', outtext)
@@ -768,13 +765,11 @@ class HTML2Text(HTMLParser.HTMLParser):
             if tag == "table":
                 if start:
                     self.table_start = True
-                    if self.pad_tables:
-                        self.o("<" + TABLE_MARKER_FOR_PAD + ">")
-                        self.o("  \n")
+                    self.o("<" + TABLE_MARKER_FOR_PAD + ">")
+                    self.o("  \n")
                 else:
-                    if self.pad_tables:
-                        self.o("</" + TABLE_MARKER_FOR_PAD + ">")
-                        self.o("  \n")
+                    self.o("</" + TABLE_MARKER_FOR_PAD + ">")
+                    self.o("  \n")
             if tag in ["td", "th"] and start:
                 if self.split_next_td:
                     self.o("│ ")
@@ -997,13 +992,6 @@ def main():
         help="input encoding"
     )
     p.add_argument(
-        "--pad-tables",
-        dest="pad_tables",
-        action="store_true",
-        default=PAD_TABLES,
-        help="pad the cells to equal column width in tables"
-    )
-    p.add_argument(
         "--reference-links",
         dest="inline_links",
         action="store_false",
@@ -1069,7 +1057,6 @@ def main():
 
     h.columns = options.columns
     h.inline_links = options.inline_links
-    h.pad_tables = options.pad_tables
 
     sys.stdout.buffer.write(h.handle(data).encode('utf-8'))
 
