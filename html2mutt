@@ -258,13 +258,7 @@ def convert_superscript(num):
 
 
 class HTML2Text(HTMLParser.HTMLParser):
-    def __init__(self, baseurl=''):
-        """
-        Input parameters:
-            out: possible custom replacement for self.outtextf (which
-                 appends lines of text).
-            baseurl: base URL of the document we process
-        """
+    def __init__(self):
         HTMLParser.HTMLParser.__init__(self, convert_charrefs=True)
 
         # Config options
@@ -315,7 +309,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.abbr_title = None  # current abbreviation definition
         self.abbr_data = None  # last inner HTML (for abbr being defined)
         self.abbr_list = {}  # stack of abbreviations to write later
-        self.baseurl = baseurl
         self.stressed = False
         self.preceding_stressed = False
         self.preceding_data = None
@@ -393,7 +386,8 @@ class HTML2Text(HTMLParser.HTMLParser):
                 return i
 
     def link_url(self, link, title=""):
-        url = urlparse.urljoin(self.baseurl, link)
+        #url = urlparse.urljoin(self.baseurl, link)
+        url = link
         title = ' "{0}"'.format(title) if title.strip() else ''
         self.o(self.link_end_mark + '({url}{title})'.format(url=url,
                                         title=title))
@@ -798,7 +792,8 @@ class HTML2Text(HTMLParser.HTMLParser):
                     link['href'] = link['href'].replace('mailto:', '')
                     if self.outcount > link['outcount']:
                         self.out(convert_superscript(link['count']) + " " +
-                                 urlparse.urljoin(self.baseurl, link['href']))
+                                link['href'])
+                                #urlparse.urljoin(self.baseurl, link['href']))
                         if 'title' in link:
                             self.out(" (" + link['title'] + ")")
                         self.out("\n")
@@ -872,14 +867,13 @@ class HTML2Text(HTMLParser.HTMLParser):
 
 
 
-def html2text(html, baseurl=''):
-    h = HTML2Text(baseurl=baseurl)
+def html2text(html):
+    h = HTML2Text()
 
     return h.handle(html)
 
 
 def main():
-    baseurl = ''
     p = argparse.ArgumentParser(
         description=__doc__)
     p.add_argument(
@@ -963,7 +957,7 @@ def main():
     # zero-width space
     data = data.replace('\u200b', '')
 
-    h = HTML2Text(baseurl=baseurl)
+    h = HTML2Text()
 
 
     h.columns = options.columns
