@@ -258,7 +258,7 @@ def convert_superscript(num):
 
 class HTML2Text(html.parser.HTMLParser):
     def __init__(self):
-        html.parser.HTMLParser.__init__(self, convert_charrefs=True)
+        super().__init__(convert_charrefs=True)
 
         # Config options
         self.split_next_td = False
@@ -315,7 +315,7 @@ class HTML2Text(html.parser.HTMLParser):
 
     def feed(self, data):
         data = data.replace("</' + 'script>", "</ignore>")
-        html.parser.HTMLParser.feed(self, data)
+        super().feed(data)
 
     def handle(self, data):
         self.feed(data)
@@ -338,7 +338,7 @@ class HTML2Text(html.parser.HTMLParser):
             self.lastWasNL = s[-1] == '\n'
 
     def close(self):
-        html.parser.HTMLParser.close(self)
+        super().close()
 
         self.pbr()
         self.o('', 0, 'end')
