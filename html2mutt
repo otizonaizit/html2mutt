@@ -568,6 +568,7 @@ class HTML2Text(HTMLParser.HTMLParser):
         if tag in ["code", "tt"] and not self.pre:
             self.o('`')  # TODO: `` `this` ``
             self.code = not self.code
+
         if tag == "abbr":
             if start:
                 self.abbr_title = None
@@ -705,7 +706,6 @@ class HTML2Text(HTMLParser.HTMLParser):
                 self.pre = 0
             self.p()
 
-    # TODO: Add docstring for these one letter functions
     def pbr(self):
         "Pretty print has a line break"
         if self.p_p == 0:
@@ -794,6 +794,8 @@ class HTML2Text(HTMLParser.HTMLParser):
                 newa = []
                 self.out('\n\n––––\n\n')
                 for link in self.a:
+                    # remove mailto protocol links
+                    link['href'] = link['href'].replace('mailto:', '')
                     if self.outcount > link['outcount']:
                         self.out(convert_superscript(link['count']) + " " +
                                  urlparse.urljoin(self.baseurl, link['href']))
