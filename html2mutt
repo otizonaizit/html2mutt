@@ -44,21 +44,13 @@ TABLE_MARKER_FOR_PAD = "special_marker_for_table_padding"
 # Values Google and others may use to indicate bold text
 BOLD_TEXT_STYLE_VALUES = ('bold', '700', '800', '900')
 
-# For checking space-only lines on line 771
-RE_SPACE = re.compile(r'\s\+')
+# regexp to be compiled only once
 RE_SPACE_GENERAL= re.compile(r'[ \r\n\t]+')
 RE_TRAILING_SPACES = re.compile(r'[^\S\r\n]+$', re.MULTILINE)
 RE_MULTIPLE_EMPTY_LINES = re.compile(r'\n\s*\n')
 RE_MULTIPLE_QUOTEEMPTY_LINES = re.compile(r'(?P<QUOTE>\>+ *\n){2,}')
 RE_PRECEDING_SPACE = re.compile(r'[^\s]')
 RE_NON_PUNCT = re.compile(r'[^\s.!?]')
-
-RE_UNESCAPE = re.compile(r"&(#?[xX]?(?:[0-9a-fA-F]+|\w{1,8}));")
-RE_ORDERED_LIST_MATCHER = re.compile(r'\d+\.\s')
-RE_UNORDERED_LIST_MATCHER = re.compile(r'[-\*\+]\s')
-
-# to find links in the text
-RE_LINK = re.compile(r"(\[.*?\] ?\(.*?\))|(\[.*?\]:.*?)")
 RE_ABSOLUTE_LINK = re.compile(r'^[a-zA-Z+]+://')
 
 
