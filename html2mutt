@@ -392,6 +392,12 @@ class HTML2Text(HTMLParser.HTMLParser):
             if match:
                 return i
 
+    def link_url(self, link, title=""):
+        url = urlparse.urljoin(self.baseurl, link)
+        title = ' "{0}"'.format(title) if title.strip() else ''
+        self.o(self.link_end_mark + '({url}{title})'.format(url=url,
+                                        title=title))
+
     def handle_emphasis(self, start, tag_style, parent_style):
         """
         Handles various text emphases
@@ -574,11 +580,6 @@ class HTML2Text(HTMLParser.HTMLParser):
                     self.abbr_title = None
                 self.abbr_data = ''
 
-        def link_url(self, link, title=""):
-            url = urlparse.urljoin(self.baseurl, link)
-            title = ' "{0}"'.format(title) if title.strip() else ''
-            self.o(self.link_end_mark + '({url}{title})'.format(url=url,
-                                            title=title))
 
         if tag == "a":
             if start:
