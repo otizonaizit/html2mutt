@@ -259,17 +259,14 @@ def convert_superscript(num):
 
 
 class HTML2Text(HTMLParser.HTMLParser):
-    def __init__(self, out=None, baseurl=''):
+    def __init__(self, baseurl=''):
         """
         Input parameters:
             out: possible custom replacement for self.outtextf (which
                  appends lines of text).
             baseurl: base URL of the document we process
         """
-        kwargs = {}
-        if sys.version_info >= (3, 4):
-            kwargs['convert_charrefs'] = True
-        HTMLParser.HTMLParser.__init__(self, **kwargs)
+        HTMLParser.HTMLParser.__init__(self, convert_charrefs=True)
 
         # Config options
         self.split_next_td = False
@@ -286,11 +283,6 @@ class HTML2Text(HTMLParser.HTMLParser):
         self.link_end_mark = '\N{INVISIBLE SEPARATOR}' #
         self.image_placeholder_char = '\N{HEAVY SPARKLE}' #\u2748
         self.tag_callback = None
-
-        if out is None:  # pragma: no cover
-            self.out = self.outtextf
-        else:  # pragma: no cover
-            self.out = out
 
         # empty list to store output characters before they are "joined"
         self.outtextlist = []
@@ -349,7 +341,7 @@ class HTML2Text(HTMLParser.HTMLParser):
 
         return outtext
 
-    def outtextf(self, s):
+    def out(self, s):
         self.outtextlist.append(s)
         if s:
             self.lastWasNL = s[-1] == '\n'
