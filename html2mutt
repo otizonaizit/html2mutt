@@ -104,21 +104,6 @@ def dumb_css_parser(data):
     return elements
 
 
-def google_has_height(style):
-    """
-    Check if the style of the element has the 'height' attribute
-    explicitly defined
-
-    :type style: dict
-
-    :rtype: bool
-    """
-    if 'height' in style:
-        return True
-
-    return False
-
-
 def google_text_emphasis(style):
     """
     :type style: dict
