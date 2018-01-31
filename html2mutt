@@ -274,7 +274,6 @@ class HTML2Text(html.parser.HTMLParser):
         self.link_begin_mark = '\N{INVISIBLE SEPARATOR}' #\u2063
         self.link_end_mark = '\N{INVISIBLE SEPARATOR}' #
         self.image_placeholder_char = '\N{HEAVY SPARKLE}' #\u2748
-        self.tag_callback = None
 
         # empty list to store output characters before they are "joined"
         self.outtextlist = []
@@ -457,10 +456,6 @@ class HTML2Text(html.parser.HTMLParser):
             attrs = {}
         else:
             attrs = dict(attrs)
-
-        if self.tag_callback is not None:
-            if self.tag_callback(self, tag, attrs, start) is True:
-                return
 
         # first thing inside the anchor tag is another tag
         # that produces some output
