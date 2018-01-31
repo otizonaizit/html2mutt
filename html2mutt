@@ -715,9 +715,6 @@ class HTML2Text(html.parser.HTMLParser):
 
         if not self.quiet:
             if puredata and not self.pre:
-                # This is a very dangerous call ... it could mess up
-                # all handling of &nbsp; when not handled properly
-                # (see entityref)
                 data = RE_SPACE_GENERAL.sub(' ', data)
                 if data and data[0] == ' ':
                     self.space = 1
