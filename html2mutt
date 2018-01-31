@@ -273,7 +273,7 @@ class HTML2Text(html.parser.HTMLParser):
         self.underline_mark_end = '\033[0m'
         self.link_begin_mark = '\N{INVISIBLE SEPARATOR}' #\u2063
         self.link_end_mark = '\N{INVISIBLE SEPARATOR}' #
-        self.image_placeholder_char = '\N{HEAVY SPARKLE}' #\u2748
+        self.image_placeholder_char = '\N{SHAMROCK}' #\u2618
 
         # empty list to store output characters before they are "joined"
         self.outtextlist = []
