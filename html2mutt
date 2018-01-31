@@ -256,9 +256,10 @@ def convert_superscript(num):
 
 
 class HTML2Text(html.parser.HTMLParser):
-    def __init__(self):
+    def __init__(self, columns):
         super().__init__(convert_charrefs=True)
 
+        self.columns = columns
         # Config options
         self.split_next_td = False
         self.td_count = 0
@@ -912,11 +913,7 @@ def main():
     # zero-width space
     data = data.replace('\u200b', '')
 
-    h = HTML2Text()
-
-
-    h.columns = options.columns
-
+    h = HTML2Text(options.columns)
     sys.stdout.buffer.write(h.handle(data).encode('utf-8'))
 
 if __name__ == "__main__":
