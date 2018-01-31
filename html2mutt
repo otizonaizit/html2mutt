@@ -381,9 +381,6 @@ class HTML2Text(html.parser.HTMLParser):
             if match:
                 return i
 
-    def link_url(self, link, title=""):
-        title = f' "{title}"' if title.strip() else ''
-        self.o(self.link_end_mark + f'({link}{title})')
 
     def handle_emphasis(self, start, tag_style, parent_style):
         """
@@ -585,13 +582,6 @@ class HTML2Text(html.parser.HTMLParser):
                             self.o(self.link_begin_mark)
                             self.empty_link = False
                             self.maybe_automatic_link = None
-                        if self.inline_links:
-                            try:
-                                title = a['title'] if a['title'] else ''
-                            except KeyError:
-                                link_url(self, a['href'], '')
-                            else:
-                                link_url(self, a['href'], title)
                         else:
                             i = self.previous_index(a)
                             if i is not None:
@@ -870,13 +860,6 @@ def main():
         help="input encoding"
     )
     p.add_argument(
-        "--reference-links",
-        dest="inline_links",
-        action="store_false",
-        default=False,
-        help="use reference style links instead of inline links"
-    )
-    p.add_argument(
         "--decode-errors",
         dest="decode_errors",
         action="store",
@@ -934,7 +917,6 @@ def main():
 
 
     h.columns = options.columns
-    h.inline_links = options.inline_links
 
     sys.stdout.buffer.write(h.handle(data).encode('utf-8'))
 
