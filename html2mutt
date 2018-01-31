@@ -104,27 +104,6 @@ def dumb_css_parser(data):
     return elements
 
 
-def element_style(attrs, style_def, parent_style):
-    """
-    :type attrs: dict
-    :type style_def: dict
-    :type style_def: dict
-
-    :returns: A hash of the 'final' style attributes of the element
-    :rtype: dict
-    """
-    style = parent_style.copy()
-    if 'class' in attrs:
-        for css_class in attrs['class'].split():
-            css_style = style_def.get('.' + css_class, {})
-            style.update(css_style)
-    if 'style' in attrs:
-        immediate_style = dumb_property_dict(attrs['style'])
-        style.update(immediate_style)
-
-    return style
-
-
 def google_list_style(style):
     """
     Finds out whether this is an ordered or unordered list
