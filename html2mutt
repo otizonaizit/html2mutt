@@ -460,23 +460,11 @@ class HTML2Text(HTMLParser.HTMLParser):
 
         outtext = nochr.join(self.outtextlist)
 
-        nbsp = chr(name2cp('nbsp'))
-        try:
-            outtext = outtext.replace(unicode('&nbsp_place_holder;'), nbsp)
-        except NameError:
-            outtext = outtext.replace('&nbsp_place_holder;', nbsp)
-
         # Clear self.outtextlist to avoid memory leak of its content to
         # the next handling.
         self.outtextlist = []
 
         return outtext
-
-    def handle_charref(self, c):
-        self.handle_data(self.charref(c), True)
-
-    def handle_entityref(self, c):
-        self.handle_data(self.entityref(c), True)
 
     def handle_starttag(self, tag, attrs):
         self.handle_tag(tag, attrs, 1)
@@ -989,32 +977,6 @@ class HTML2Text(HTMLParser.HTMLParser):
     def unknown_decl(self, data):  # pragma: no cover
         # TODO: what is this doing here?
         pass
-
-    def charref(self, name):
-        if name[0] in ['x', 'X']:
-            c = int(name[1:], 16)
-        else:
-            c = int(name)
-
-        try:
-            return chr(c)
-        except ValueError:  # invalid unicode
-            return ''
-
-    def entityref(self, c):
-        try:
-            name2cp(c)
-        except KeyError:
-            return "&" + c + ';'
-        else:
-            return chr(name2cp(c))
-
-    def replaceEntities(self, s):
-        s = s.group(1)
-        if s[0] == "#":
-            return self.charref(s[1:])
-        else:
-            return self.entityref(s)
 
 
 
