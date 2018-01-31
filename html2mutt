@@ -29,8 +29,7 @@ import argparse
 import os
 import sys
 
-import urllib.parse as urlparse
-import html.parser as HTMLParser
+import html.parser
 
 import chardet
 
@@ -257,9 +256,9 @@ def convert_superscript(num):
     return str_
 
 
-class HTML2Text(HTMLParser.HTMLParser):
+class HTML2Text(html.parser.HTMLParser):
     def __init__(self):
-        HTMLParser.HTMLParser.__init__(self, convert_charrefs=True)
+        html.parser.HTMLParser.__init__(self, convert_charrefs=True)
 
         # Config options
         self.split_next_td = False
@@ -316,7 +315,7 @@ class HTML2Text(HTMLParser.HTMLParser):
 
     def feed(self, data):
         data = data.replace("</' + 'script>", "</ignore>")
-        HTMLParser.HTMLParser.feed(self, data)
+        html.parser.HTMLParser.feed(self, data)
 
     def handle(self, data):
         self.feed(data)
@@ -339,7 +338,7 @@ class HTML2Text(HTMLParser.HTMLParser):
             self.lastWasNL = s[-1] == '\n'
 
     def close(self):
-        HTMLParser.HTMLParser.close(self)
+        html.parser.HTMLParser.close(self)
 
         self.pbr()
         self.o('', 0, 'end')
@@ -790,7 +789,6 @@ class HTML2Text(HTMLParser.HTMLParser):
                     if self.outcount > link['outcount']:
                         self.out(convert_superscript(link['count']) + " " +
                                 link['href'])
-                                #urlparse.urljoin(self.baseurl, link['href']))
                         if 'title' in link:
                             self.out(" (" + link['title'] + ")")
                         self.out("\n")
