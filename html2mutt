@@ -104,22 +104,6 @@ def dumb_css_parser(data):
     return elements
 
 
-def google_list_style(style):
-    """
-    Finds out whether this is an ordered or unordered list
-
-    :type style: dict
-
-    :rtype: str
-    """
-    if 'list-style-type' in style:
-        list_style = style['list-style-type']
-        if list_style in ['disc', 'circle', 'square', 'none']:
-            return 'ul'
-
-    return 'ol'
-
-
 def google_has_height(style):
     """
     Check if the style of the element has the 'height' attribute
