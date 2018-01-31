@@ -846,20 +846,20 @@ def main():
         default=None,
         help="input file (read from stdin if not specified)")
     p.add_argument(
-        "--columns",
+        "-c", "--columns",
         dest="columns",
         action="store",
         type=int,
         default=0,
         help="columns")
     p.add_argument(
-        "--encoding",
+        "-e", "--encoding",
         dest="encoding",
         action="store",
         default="utf-8",
         help="input encoding")
     p.add_argument(
-        "--decode-errors",
+        "-d", "--decode-errors",
         dest="decode_errors",
         action="store",
         default="strict",
