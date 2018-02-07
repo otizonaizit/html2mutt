@@ -48,6 +48,7 @@ RE_SPACE_GENERAL= re.compile(r'[ \r\n\t]+')
 RE_TRAILING_SPACES = re.compile(r'[^\S\r\n]+$', re.MULTILINE)
 RE_MULTIPLE_EMPTY_LINES = re.compile(r'\n\s*\n')
 RE_MULTIPLE_QUOTEEMPTY_LINES = re.compile(r'(?P<QUOTE>\>+ *\n){2,}')
+RE_MULTIPLE_BLANKS = re.compile('[ \N{NO-BREAK SPACE}]{2,}')
 RE_NON_PUNCT = re.compile(r'[^\s.!?]')
 
 def hn(tag):
@@ -327,6 +328,8 @@ class HTML2Text(html.parser.HTMLParser):
         outtext = RE_MULTIPLE_QUOTEEMPTY_LINES.sub('\g<QUOTE>', outtext)
         # remove trailing spaces
         outtext = RE_TRAILING_SPACES.sub('', outtext)
+        # compress multiple spaces into one
+        outtext = RE_MULTIPLE_BLANKS.sub(' ', outtext)
 
         return outtext
 
@@ -792,7 +795,7 @@ class HTML2Text(html.parser.HTMLParser):
 
     def handle_data(self, data, entity_char=False):
         if self.stressed:
-            data = data.strip()
+            #data = data.strip(' ')
             self.stressed = False
             self.preceding_stressed = True
         elif (self.preceding_stressed
