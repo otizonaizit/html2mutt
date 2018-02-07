@@ -320,7 +320,6 @@ class HTML2Text(html.parser.HTMLParser):
         self.feed(data)
         self.feed("")
         outtext = self.close()
-        outtext = pad_tables_in_text(outtext, columns=self.columns)
 
         # reduce >2 empty lines to only one empty line
         outtext = RE_MULTIPLE_EMPTY_LINES.sub('\n\n', outtext)
@@ -330,6 +329,8 @@ class HTML2Text(html.parser.HTMLParser):
         outtext = RE_TRAILING_SPACES.sub('', outtext)
         # compress multiple spaces into one
         outtext = RE_MULTIPLE_BLANKS.sub('\g<FORMATTING> ', outtext)
+        # pad tables after having cleaned up the string
+        outtext = pad_tables_in_text(outtext, columns=self.columns)
 
         return outtext
 
