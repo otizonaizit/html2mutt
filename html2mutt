@@ -877,7 +877,7 @@ def main():
     if not options.file:
         data = sys.stdin.buffer.read()
     else:
-        data = open(options.file, 'r').read()
+        data = open(options.file, 'rb').read()
 
     # try to decode the binary string with the declared charset
     try:
