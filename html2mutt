@@ -321,16 +321,16 @@ class HTML2Text(html.parser.HTMLParser):
         self.feed("")
         outtext = self.close()
 
-        # reduce >2 empty lines to only one empty line
-        outtext = RE_MULTIPLE_EMPTY_LINES.sub('\n\n', outtext)
-        # do the same for lines with only blockquote char and spaces
-        outtext = RE_MULTIPLE_QUOTEEMPTY_LINES.sub('\g<QUOTE>', outtext)
-        # remove trailing spaces
-        outtext = RE_TRAILING_SPACES.sub('', outtext)
         # compress multiple spaces into one
         outtext = RE_MULTIPLE_BLANKS.sub('\g<FORMATTING> ', outtext)
         # pad tables after having cleaned up the string
         outtext = pad_tables_in_text(outtext, columns=self.columns)
+        # remove trailing spaces
+        outtext = RE_TRAILING_SPACES.sub('', outtext)
+        # reduce >2 empty lines to only one empty line
+        outtext = RE_MULTIPLE_EMPTY_LINES.sub('\n\n', outtext)
+        # do the same for lines with only blockquote char and spaces
+        outtext = RE_MULTIPLE_QUOTEEMPTY_LINES.sub('\g<QUOTE>', outtext)
 
         return outtext
 
