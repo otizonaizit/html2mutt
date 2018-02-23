@@ -480,9 +480,6 @@ class HTML2Text(html.parser.HTMLParser):
             if start and tag == 'div' and 'style' in attrs \
                and 'display:inline' in attrs['style']:
                 self.div_was_inline = True
-            # if div has no attributes, just ignore it
-            if start and tag == 'div' and not attrs:
-                self.div_was_inline = True
             elif self.astack and tag == 'div':
                 pass
             elif tag == 'div' and self.div_was_inline and not start:
