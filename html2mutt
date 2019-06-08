@@ -48,7 +48,7 @@ RE_SPACE_GENERAL= re.compile(r'[ \r\n\t]+')
 RE_TRAILING_SPACES = re.compile(r'[^\S\r\n]+$', re.MULTILINE)
 RE_MULTIPLE_EMPTY_LINES = re.compile(r'\n\s*\n')
 RE_MULTIPLE_QUOTEEMPTY_LINES = re.compile(r'(?P<QUOTE>\>+ *\n){2,}')
-RE_MULTIPLE_BLANKS = re.compile('[ \N{NO-BREAK SPACE}]+(?P<FORMATTING>\N{INVISIBLE SEPARATOR}*)[ \N{NO-BREAK SPACE}]+')
+RE_MULTIPLE_BLANKS = re.compile('[ ]+(?P<FORMATTING>\N{INVISIBLE SEPARATOR}*)[ ]+')
 RE_NON_PUNCT = re.compile(r'[^\s.!?]')
 
 def hn(tag):
