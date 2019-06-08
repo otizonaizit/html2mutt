@@ -774,7 +774,7 @@ class HTML2Text(html.parser.HTMLParser):
                     if self.outcount > link['outcount']:
                         self.out(convert_superscript(link['count']) + " " +
                                 link['href'])
-                        if 'title' in link:
+                        if ('title' in link) and (link['title'] is not None):
                             self.out(" (" + link['title'] + ")")
                         self.out("\n")
                     else:
