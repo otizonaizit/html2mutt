@@ -821,12 +821,16 @@ class HTML2Text(html.parser.HTMLParser):
             datacmp = data.strip()
             # href is equivalent to data if they only differ for a final '/'
             # check also if data is only missing the http/s part
-            conditions = (href == datacmp,
-                          href[7:] == datacmp,
-                          href[8:] == datacmp,
-                          href[:-1] == datacmp and href[-1] == '/',
-                          href == datacmp[:-1] and datacmp[-1] == '/',
-                          )
+            if len(href) > 0:
+                conditions = (href == datacmp,
+                              href[7:] == datacmp,
+                              href[8:] == datacmp,
+                              href[:-1] == datacmp and href[-1] == '/',
+                              href == datacmp[:-1] and datacmp[-1] == '/',
+                              )
+            else:
+                conditions = (href == datacmp, )
+
             if any(conditions):
                 self.o(data)
                 self.empty_link = False
@@ -852,6 +856,7 @@ def main():
     p.add_argument(
         "-c", "--columns",
         dest="columns",
+        nargs='?',
         action="store",
         type=int,
         default=0,
