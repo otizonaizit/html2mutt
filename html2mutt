@@ -476,9 +476,10 @@ class HTML2Text(html.parser.HTMLParser):
                 self.inheader = False
                 return  # prevent redundant emphasis marks on headers
 
+
         if tag in ['p', 'div']:
             if start and tag == 'div' and 'style' in attrs \
-               and 'display:inline' in attrs['style']:
+               and attrs['style'] is not None and 'display:inline' in attrs['style']:
                 self.div_was_inline = True
             elif self.astack and tag == 'div':
                 pass
